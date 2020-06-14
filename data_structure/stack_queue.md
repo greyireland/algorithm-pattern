@@ -4,7 +4,7 @@
 
 栈的特点是后入先出
 
-![image.png](../images/stack.png)
+![image.png](https://img.fuiboom.com/img/stack.png)
 
 根据这个特点可以临时保存一些数据，之后用到依次再弹出来，常用于 DFS 深度搜索
 
@@ -296,11 +296,11 @@ func dfs(grid [][]byte,i,j int)int{
 
 思路：求以当前柱子为高度的面积，即转化为寻找小于当前值的左右两边值
 
-![image.png](../images/stack_rain.png)
+![image.png](https://img.fuiboom.com/img/stack_rain.png)
 
 用栈保存小于当前值的左的元素
 
-![image.png](../images/stack_rain2.png)
+![image.png](https://img.fuiboom.com/img/stack_rain2.png)
 
 ```go
 func largestRectangleArea(heights []int) int {

@@ -368,7 +368,7 @@ func reverseList(head *ListNode) *ListNode {
 > 给定一个链表，判断链表中是否有环。
 
 思路：快慢指针，快慢指针相同则有环，证明：如果有环每走一步快慢指针距离会减 1
-![fast_slow_linked_list](../images/fast_slow_linked_list.png)
+![fast_slow_linked_list](https://img.fuiboom.com/img/fast_slow_linked_list.png)
 
 ```go
 func hasCycle(head *ListNode) bool {
@@ -394,7 +394,7 @@ func hasCycle(head *ListNode) bool {
 > 给定一个链表，返回链表开始入环的第一个节点。  如果链表无环，则返回  `null`。
 
 思路：快慢指针，快慢相遇之后，慢指针回到头，快慢指针步调一致一起移动，相遇点即为入环点
-![cycled_linked_list](../images/cycled_linked_list.png)
+![cycled_linked_list](https://img.fuiboom.com/img/cycled_linked_list.png)
 
 ```go
 func detectCycle(head *ListNode) *ListNode {

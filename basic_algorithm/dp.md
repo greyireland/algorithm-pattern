@@ -25,15 +25,15 @@
 
 遍历
 
-![image.png](../images/dp_triangle.png)
+![image.png](https://img.fuiboom.com/img/dp_triangle.png)
 
 分治法
 
-![image.png](../images/dp_dc.png)
+![image.png](https://img.fuiboom.com/img/dp_dc.png)
 
 优化 DFS，缓存已经被计算的值（称为：记忆化搜索 本质上：动态规划）
 
-![image.png](../images/dp_memory_search.png)
+![image.png](https://img.fuiboom.com/img/dp_memory_search.png)
 
 动态规划就是把大问题变成小问题，并解决了小问题重复计算的方法称为动态规划
 

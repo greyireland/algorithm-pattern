@@ -1,6 +1,6 @@
 # 算法模板
 
-![来刷题了](https://raw.githubusercontent.com/greyireland/algorithm-pattern/master/images/title.png)
+![来刷题了](https://img.fuiboom.com/img/title.png)
 
 算法模板，最科学的刷题方式，最快速的刷题路径，一个月从入门到 offer，你值得拥有~
 
@@ -47,9 +47,9 @@
 
 从 4 月份找工作开始，从 0 开始刷 LeetCode，中间大概花了一个半月(6 周)左右时间刷完 240 题。
 
-![一个半月刷完240题](https://raw.githubusercontent.com/greyireland/algorithm-pattern/master/images/leetcode_time.png)
+![一个半月刷完240题](https://img.fuiboom.com/img/leetcode_time.png)
 
-![刷题记录](https://raw.githubusercontent.com/greyireland/algorithm-pattern/master/images/leetcode_record.png)
+![刷题记录](https://img.fuiboom.com/img/leetcode_record.png)
 
 开始刷题时，确实是无从下手，因为从序号开始刷，刷到几道题就遇到 hard 的题型，会卡住很久，后面去评论区看别人怎么刷题，也去 Google 搜索最好的刷题方式，发现按题型刷题会舒服很多，基本一个类型的题目，一天能做很多，慢慢刷题也不再枯燥，做起来也很有意思，最后也收到不错的 offer（最后去了宇宙系）。
 
@@ -61,15 +61,15 @@
 
 1、 [algorithm-pattern 练习题](https://greyireland.gitbook.io/algorithm-pattern/)
 
-![练习题](https://raw.githubusercontent.com/greyireland/algorithm-pattern/master/images/repo_practice.png)
+![练习题](https://img.fuiboom.com/img/repo_practice.png)
 
 2、 [LeetCode 卡片](https://leetcode-cn.com/explore/)
 
-![探索卡片](https://raw.githubusercontent.com/greyireland/algorithm-pattern/master/images/leetcode_explore.png)
+![探索卡片](https://img.fuiboom.com/img/leetcode_explore.png)
 
 3、 [剑指 offer](https://leetcode-cn.com/problemset/lcof/)
 
-![剑指offer](https://raw.githubusercontent.com/greyireland/algorithm-pattern/master/images/leetcode_jzoffer.png)
+![剑指offer](https://img.fuiboom.com/img/leetcode_jzoffer.png)
 
 刷题时间可以合理分配，如果打算准备面试了，建议前面两部分 一个半月 （6 周）时间刷完，最后剑指 offer 半个月刷完，边刷可以边投简历进行面试，遇到不会的不用着急，往模板上套就对了~
 
@@ -85,4 +85,4 @@
 
 持续更新中，觉得还可以的话点个 **star** 收藏呀 ⭐️~
 
-【 Github 】[ https://github.com/greyireland/algorithm-pattern](https://github.com/greyireland/algorithm-pattern) ⭐️
+【 Github 】[https://github.com/greyireland/algorithm-pattern](https://github.com/greyireland/algorithm-pattern) ⭐️

@@ -15,7 +15,7 @@
 
 典型示例
 
-[binary-search](https://leetcode-cn.com/problems/binary-search/)  
+[binary-search](https://leetcode-cn.com/problems/binary-search/)
 
 > 给定一个  n  个元素有序的（升序）整型数组  nums 和一个目标值  target  ，写一个函数搜索  nums  中的 target，如果目标值存在返回下标，否则返回 -1。
 
@@ -52,7 +52,7 @@ func search(nums []int, target int) int {
 
 另外二分查找还有一些其他模板如下图，大部分场景模板#3 都能解决问题，而且还能找第一次/最后一次出现的位置，应用更加广泛
 
-![binary_search_template](../images/binary_search_template.png)
+![binary_search_template](https://img.fuiboom.com/img/binary_search_template.png)
 
 所以用模板#3 就对了，详细的对比可以这边文章介绍：[二分搜索模板](https://leetcode-cn.com/explore/learn/card/binary-search/212/template-analysis/847/)
 
