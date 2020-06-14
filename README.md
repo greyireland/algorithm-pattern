@@ -77,7 +77,7 @@
 
 ## 面试资源
 
-另外面试还看了大概 100 本书，强烈推荐 🌝
+分享一些计算机的经典书籍，大部分对面试应该都有帮助，强烈推荐 🌝
 
 [我看过的 100 本书](https://github.com/greyireland/awesome-programming-books-1)
 
