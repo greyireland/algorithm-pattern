@@ -44,94 +44,39 @@
 
 动态规划，自底向上
 
-```go
-func minimumTotal(triangle [][]int) int {
-	if len(triangle) == 0 || len(triangle[0]) == 0 {
-		return 0
-	}
-	// 1、状态定义：f[i][j] 表示从i,j出发，到达最后一层的最短路径
-	var l = len(triangle)
-	var f = make([][]int, l)
-	// 2、初始化
-	for i := 0; i < l; i++ {
-		for j := 0; j < len(triangle[i]); j++ {
-			if f[i] == nil {
-				f[i] = make([]int, len(triangle[i]))
-			}
-			f[i][j] = triangle[i][j]
-		}
-	}
-	// 3、递推求解
-	for i := len(triangle) - 2; i >= 0; i-- {
-		for j := 0; j < len(triangle[i]); j++ {
-			f[i][j] = min(f[i+1][j], f[i+1][j+1]) + triangle[i][j]
-		}
-	}
-	// 4、答案
-	return f[0][0]
-}
-func min(a, b int) int {
-	if a > b {
-		return b
-	}
-	return a
-}
+```Python
+class Solution:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        if len(triangle) == 0:
+            return 0
+        
+        dp = triangle[-1].copy()
+        
+        for i in range(-2, -len(triangle) - 1, -1):
+            for j in range(len(triangle[i])):
+                dp[j] = triangle[i][j] + min(dp[j], dp[j + 1])
+        
+        return dp[0]
 
 ```
 
 动态规划，自顶向下
 
-```go
-// 测试用例：
-// [
-// [2],
-// [3,4],
-// [6,5,7],
-// [4,1,8,3]
-// ]
-func minimumTotal(triangle [][]int) int {
-    if len(triangle) == 0 || len(triangle[0]) == 0 {
-        return 0
-    }
-    // 1、状态定义：f[i][j] 表示从0,0出发，到达i,j的最短路径
-    var l = len(triangle)
-    var f = make([][]int, l)
-    // 2、初始化
-    for i := 0; i < l; i++ {
-        for j := 0; j < len(triangle[i]); j++ {
-            if f[i] == nil {
-                f[i] = make([]int, len(triangle[i]))
-            }
-            f[i][j] = triangle[i][j]
-        }
-    }
-    // 递推求解
-    for i := 1; i < l; i++ {
-        for j := 0; j < len(triangle[i]); j++ {
-            // 这里分为两种情况：
-            // 1、上一层没有左边值
-            // 2、上一层没有右边值
-            if j-1 < 0 {
-                f[i][j] = f[i-1][j] + triangle[i][j]
-            } else if j >= len(f[i-1]) {
-                f[i][j] = f[i-1][j-1] + triangle[i][j]
-            } else {
-                f[i][j] = min(f[i-1][j], f[i-1][j-1]) + triangle[i][j]
-            }
-        }
-    }
-    result := f[l-1][0]
-    for i := 1; i < len(f[l-1]); i++ {
-        result = min(result, f[l-1][i])
-    }
-    return result
-}
-func min(a, b int) int {
-    if a > b {
-        return b
-    }
-    return a
-}
+```Python
+class Solution:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        if len(triangle) == 0:
+            return 0
+        
+        dp = triangle[0]
+        for row in triangle[1:]:
+            dp_new = [row[0] + dp[0]]
+            for i in range(len(dp) - 1):
+                dp_new.append(row[i+1] + min(dp[i], dp[i+1]))
+            dp_new.append(row[-1] + dp[-1])
+            dp = dp_new
+        
+        return min(dp)
 ```
 
 ## 递归和动规关系
@@ -194,34 +139,21 @@ Function(x) {
 3、intialize: f[0][0] = A[0][0]、f[i][0] = sum(0,0 -> i,0)、 f[0][i] = sum(0,0 -> 0,i)
 4、answer: f[n-1][m-1]
 
-```go
-func minPathSum(grid [][]int) int {
-    // 思路：动态规划
-    // f[i][j] 表示i,j到0,0的和最小
-    if len(grid) == 0 || len(grid[0]) == 0 {
-        return 0
-    }
-    // 复用原来的矩阵列表
-    // 初始化：f[i][0]、f[0][j]
-    for i := 1; i < len(grid); i++ {
-        grid[i][0] = grid[i][0] + grid[i-1][0]
-    }
-    for j := 1; j < len(grid[0]); j++ {
-        grid[0][j] = grid[0][j] + grid[0][j-1]
-    }
-    for i := 1; i < len(grid); i++ {
-        for j := 1; j < len(grid[i]); j++ {
-            grid[i][j] = min(grid[i][j-1], grid[i-1][j]) + grid[i][j]
-        }
-    }
-    return grid[len(grid)-1][len(grid[0])-1]
-}
-func min(a, b int) int {
-    if a > b {
-        return b
-    }
-    return a
-}
+```Python
+class Solution:
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+        
+        dp = [0] * n
+        dp[0] = grid[0][0]
+        for i in range(1, n):
+            dp[i] = dp[i-1] + grid[0][i]
+        
+        for i in range(1, m):
+            dp[0] += grid[i][0]
+            for j in range(1, n):
+                dp[j] = grid[i][j] + min(dp[j-1], dp[j])
+        return dp[-1]
 ```
 
 ### [unique-paths](https://leetcode-cn.com/problems/unique-paths/)
@@ -230,25 +162,20 @@ func min(a, b int) int {
 > 机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
 > 问总共有多少条不同的路径？
 
-```go
-func uniquePaths(m int, n int) int {
-	// f[i][j] 表示i,j到0,0路径数
-	f := make([][]int, m)
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if f[i] == nil {
-				f[i] = make([]int, n)
-			}
-			f[i][j] = 1
-		}
-	}
-	for i := 1; i < m; i++ {
-		for j := 1; j < n; j++ {
-			f[i][j] = f[i-1][j] + f[i][j-1]
-		}
-	}
-	return f[m-1][n-1]
-}
+```Python
+class Solution:
+    def uniquePaths(self, m: int, n: int) -> int:
+        
+        if m < n:
+            m, n = n, m
+        
+        dp = [1] * n
+        
+        for i in range(1, m):
+            for j in range(1, n):
+                dp[j] += dp[j - 1]
+        
+        return dp[-1]
 ```
 
 ### [unique-paths-ii](https://leetcode-cn.com/problems/unique-paths-ii/)
@@ -258,44 +185,23 @@ func uniquePaths(m int, n int) int {
 > 问总共有多少条不同的路径？
 > 现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
 
-```go
-func uniquePathsWithObstacles(obstacleGrid [][]int) int {
-	// f[i][j] = f[i-1][j] + f[i][j-1] 并检查障碍物
-	if obstacleGrid[0][0] == 1 {
-		return 0
-	}
-	m := len(obstacleGrid)
-	n := len(obstacleGrid[0])
-	f := make([][]int, m)
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if f[i] == nil {
-				f[i] = make([]int, n)
-			}
-			f[i][j] = 1
-		}
-	}
-	for i := 1; i < m; i++ {
-		if obstacleGrid[i][0] == 1 || f[i-1][0] == 0 {
-			f[i][0] = 0
-		}
-	}
-	for j := 1; j < n; j++ {
-		if obstacleGrid[0][j] == 1 || f[0][j-1] == 0 {
-			f[0][j] = 0
-		}
-	}
-	for i := 1; i < m; i++ {
-		for j := 1; j < n; j++ {
-			if obstacleGrid[i][j] == 1 {
-				f[i][j] = 0
-			} else {
-				f[i][j] = f[i-1][j] + f[i][j-1]
-			}
-		}
-	}
-	return f[m-1][n-1]
-}
+```Python
+class Solution:
+    def uniquePathsWithObstacles(self, G: List[List[int]]) -> int:
+        
+        m, n = len(G), len(G[0])
+        
+        dp = [1] if G[0][0] == 0 else [0]
+        for i in range(1, n):
+            new = dp[i-1] if G[0][i] == 0 else 0
+            dp.append(new)
+        
+        for i in range(1, m):
+            dp[0] = 0 if G[i][0] == 1 else dp[0]
+            for j in range(1, n):
+                dp[j] = dp[j-1] + dp[j] if G[i][j] == 0 else 0
+        
+        return dp[-1]
 ```
 
 ## 2、序列类型（40%）
@@ -304,20 +210,17 @@ func uniquePathsWithObstacles(obstacleGrid [][]int) int {
 
 > 假设你正在爬楼梯。需要  *n*  阶你才能到达楼顶。
 
-```go
-func climbStairs(n int) int {
-    // f[i] = f[i-1] + f[i-2]
-    if n == 1 || n == 0 {
-        return n
-    }
-    f := make([]int, n+1)
-    f[1] = 1
-    f[2] = 2
-    for i := 3; i <= n; i++ {
-        f[i] = f[i-1] + f[i-2]
-    }
-    return f[n]
-}
+```Python
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        if n < 2: return n
+        
+        step1, step2 = 2, 1
+        
+        for _ in range(n - 2):
+            step1, step2 = step1 + step2, step1
+        
+        return step1
 ```
 
 ### [jump-game](https://leetcode-cn.com/problems/jump-game/)
@@ -326,27 +229,34 @@ func climbStairs(n int) int {
 > 数组中的每个元素代表你在该位置可以跳跃的最大长度。
 > 判断你是否能够到达最后一个位置。
 
-```go
-func canJump(nums []int) bool {
-    // 思路：看最后一跳
-    // 状态：f[i] 表示是否能从0跳到i
-    // 推导：f[i] = OR(f[j],j<i&&j能跳到i) 判断之前所有的点最后一跳是否能跳到当前点
-    // 初始化：f[0] = 0
-    // 结果： f[n-1]
-    if len(nums) == 0 {
-        return true
-    }
-    f := make([]bool, len(nums))
-    f[0] = true
-    for i := 1; i < len(nums); i++ {
-        for j := 0; j < i; j++ {
-            if f[j] == true && nums[j]+j >= i {
-                f[i] = true
-            }
-        }
-    }
-    return f[len(nums)-1]
-}
+解法：直接DP无法得到O(n)的解，考虑间接DP
+
+- tail to head
+```Python
+class Solution:
+    def canJump(self, nums: List[int]) -> bool:
+        
+        left = len(nums) - 1 # most left index that can reach the last index
+        
+        for i in range(len(nums) - 2, -1, -1):
+            
+            left = i if i + nums[i] >= left else left # DP
+        
+        return left == 0
+```
+- head to tail
+```Python
+class Solution:
+    def canJump(self, nums: List[int]) -> bool:
+        
+        max_pos = nums[0] # furthest index can reach
+        
+        for i in range(1, len(nums)):
+            if max_pos < i:
+                return False
+            max_pos = max(max_pos, i + nums[i]) # DP
+        
+        return True
 ```
 
 ### [jump-game-ii](https://leetcode-cn.com/problems/jump-game-ii/)
@@ -355,32 +265,26 @@ func canJump(nums []int) bool {
 > 数组中的每个元素代表你在该位置可以跳跃的最大长度。
 > 你的目标是使用最少的跳跃次数到达数组的最后一个位置。
 
-```go
-func jump(nums []int) int {
-    // 状态：f[i] 表示从起点到当前位置最小次数
-    // 推导：f[i] = f[j],a[j]+j >=i,min(f[j]+1)
-    // 初始化：f[0] = 0
-    // 结果：f[n-1]
-    f := make([]int, len(nums))
-    f[0] = 0
-    for i := 1; i < len(nums); i++ {
-        // f[i] 最大值为i
-        f[i] = i
-        // 遍历之前结果取一个最小值+1
-        for j := 0; j < i; j++ {
-            if nums[j]+j >= i {
-                f[i] = min(f[j]+1,f[i])
-            }
-        }
-    }
-    return f[len(nums)-1]
-}
-func min(a, b int) int {
-    if a > b {
-        return b
-    }
-    return a
-}
+```Python
+class Solution:
+    def jump(self, nums: List[int]) -> int:
+        
+        cur_max = 0
+        step_max = 0
+        step = 0
+        
+        for i in range(len(nums)):
+
+            if cur_max < i: # can't reach i, don't have to consider in this problem
+                return float('inf')
+            
+            if step_max < i: # can't reach i in current number of steps
+                step += 1
+                step_max = cur_max
+            
+            cur_max = max(cur_max, i + nums[i]) # DP
+        
+        return min_step
 ```
 
 ### [palindrome-partitioning-ii](https://leetcode-cn.com/problems/palindrome-partitioning-ii/)
@@ -388,133 +292,95 @@ func min(a, b int) int {
 > 给定一个字符串 _s_，将 _s_ 分割成一些子串，使每个子串都是回文串。
 > 返回符合要求的最少分割次数。
 
-```go
-func minCut(s string) int {
-	// state: f[i] "前i"个字符组成的子字符串需要最少几次cut(个数-1为索引)
-	// function: f[i] = MIN{f[j]+1}, j < i && [j+1 ~ i]这一段是一个回文串
-	// intialize: f[i] = i - 1 (f[0] = -1)
-	// answer: f[s.length()]
-	if len(s) == 0 || len(s) == 1 {
-		return 0
-	}
-	f := make([]int, len(s)+1)
-	f[0] = -1
-	f[1] = 0
-	for i := 1; i <= len(s); i++ {
-		f[i] = i - 1
-		for j := 0; j < i; j++ {
-			if isPalindrome(s, j, i-1) {
-				f[i] = min(f[i], f[j]+1)
-			}
-		}
-	}
-	return f[len(s)]
-}
-func min(a, b int) int {
-	if a > b {
-		return b
-	}
-	return a
-}
-func isPalindrome(s string, i, j int) bool {
-	for i < j {
-		if s[i] != s[j] {
-			return false
-		}
-		i++
-		j--
-	}
-	return true
-}
+- Why is hard
+
+仅目标DP, 判断回文时间复杂度高 -> 目标DP + 回文二维DP, 回文DP空间复杂度高 -> 一点trick, 回文DP空间复杂度降为线性
+
+```Python
+class Solution:
+    
+    def minCut(self, s: str) -> int:
+        
+        dp_min = [0] * len(s)
+        dp_pal = [True] * len(s)
+        
+        def isPal(i, j):
+            dp_pal[i] = (s[i] == s[j] and dp_pal[i+1])
+            return dp_pal[i]
+        
+        for j in range(1, len(s)):
+            
+            min_cut = dp_min[j - 1] + 1
+            
+            if isPal(0, j):
+                min_cut = 0
+            
+            for i in range(1, j):
+                if isPal(i, j):
+                    min_cut = min(min_cut, dp_min[i - 1] + 1)
+            
+            dp_min[j] = min_cut
+        
+        return dp_min[-1]
 ```
-
-注意点
-
-- 判断回文字符串时，可以提前用动态规划算好，减少时间复杂度
 
 ### [longest-increasing-subsequence](https://leetcode-cn.com/problems/longest-increasing-subsequence/)
 
 > 给定一个无序的整数数组，找到其中最长上升子序列的长度。
 
-```go
-func lengthOfLIS(nums []int) int {
-    // f[i] 表示从0开始到i结尾的最长序列长度
-    // f[i] = max(f[j])+1 ,a[j]<a[i]
-    // f[0...n-1] = 1
-    // max(f[0]...f[n-1])
-    if len(nums) == 0 || len(nums) == 1 {
-        return len(nums)
-    }
-    f := make([]int, len(nums))
-    f[0] = 1
-    for i := 1; i < len(nums); i++ {
-        f[i] = 1
-        for j := 0; j < i; j++ {
-            if nums[j] < nums[i] {
-                f[i] = max(f[i], f[j]+1)
-            }
-        }
-    }
-    result := f[0]
-    for i := 1; i < len(nums); i++ {
-        result = max(result, f[i])
-    }
-    return result
-
-}
-func max(a, b int) int {
-    if a > b {
-        return a
-    }
-    return b
-}
+- DP(i) 等于以第i个数结尾的最长上升子序列的长度，容易想但不是最优
+```Python
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        
+        if len(nums) == 0: return 0
+        
+        dp_max = [1] * len(nums)
+        
+        for j in range(1, len(nums)):
+            for i in range(j):
+                if nums[j] > nums[i]:
+                    dp_max[j] = max(dp_max[j], dp_max[i] + 1)
+        
+        return max(dp_max)
+```
+- 最优算法使用 greedy + binary search，比较tricky
+```Python
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        
+        if len(nums) == 0: return 0
+        
+        seq = [nums[0]]
+        
+        for i in range(1, len(nums)):
+            ins = bisect.bisect_left(seq, nums[i])
+            if ins == len(seq):
+                seq.append(nums[i])
+            else:
+                seq[ins] = nums[i]
+        
+        return len(seq)
 ```
 
 ### [word-break](https://leetcode-cn.com/problems/word-break/)
 
 > 给定一个**非空**字符串  *s*  和一个包含**非空**单词列表的字典  *wordDict*，判定  *s*  是否可以被空格拆分为一个或多个在字典中出现的单词。
 
-```go
-func wordBreak(s string, wordDict []string) bool {
-	// f[i] 表示前i个字符是否可以被切分
-	// f[i] = f[j] && s[j+1~i] in wordDict
-	// f[0] = true
-	// return f[len]
-
-	if len(s) == 0 {
-		return true
-	}
-	f := make([]bool, len(s)+1)
-	f[0] = true
-	max := maxLen(wordDict)
-	for i := 1; i <= len(s); i++ {
-		for j := i - max; j < i && j >= 0; j++ {
-			if f[j] && inDict(s[j:i]) {
-				f[i] = true
-				break
-			}
-		}
-	}
-	return f[len(s)]
-}
-
-var dict = make(map[string]bool)
-
-func maxLen(wordDict []string) int {
-	max := 0
-	for _, v := range wordDict {
-		dict[v] = true
-		if len(v) > max {
-			max = len(v)
-		}
-	}
-	return max
-}
-
-func inDict(s string) bool {
-	_, ok := dict[s]
-	return ok
-}
+```Python
+class Solution:
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        
+        dp = [False] * (len(s) + 1)
+        dp[-1] = True
+        
+        for j in range(len(s)):
+            for i in range(j+1):
+                if dp[i - 1] and s[i:j+1] in wordDict:
+                    dp[j] = True
+                    break
+        
+        return dp[len(s) - 1]
 
 ```
 
@@ -535,52 +401,35 @@ func inDict(s string) bool {
 > 一个字符串的   子序列   是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。
 > 例如，"ace" 是 "abcde" 的子序列，但 "aec" 不是 "abcde" 的子序列。两个字符串的「公共子序列」是这两个字符串所共同拥有的子序列。
 
-```go
-func longestCommonSubsequence(a string, b string) int {
-    // dp[i][j] a前i个和b前j个字符最长公共子序列
-    // dp[m+1][n+1]
-    //   ' a d c e
-    // ' 0 0 0 0 0
-    // a 0 1 1 1 1
-    // c 0 1 1 2 1
-    //
-    dp:=make([][]int,len(a)+1)
-    for i:=0;i<=len(a);i++ {
-        dp[i]=make([]int,len(b)+1)
-    }
-    for i:=1;i<=len(a);i++ {
-        for j:=1;j<=len(b);j++ {
-            // 相等取左上元素+1，否则取左或上的较大值
-            if a[i-1]==b[j-1] {
-                dp[i][j]=dp[i-1][j-1]+1
-            } else {
-                dp[i][j]=max(dp[i-1][j],dp[i][j-1])
-            }
-        }
-    }
-    return dp[len(a)][len(b)]
-}
-func max(a,b int)int {
-    if a>b{
-        return a
-    }
-    return b
-}
+- 二维DP若只与当前行和上一行有关，可将空间复杂度降到线性
+
+```Python
+class Solution:
+    def longestCommonSubsequence(self, t1: str, t2: str) -> int:
+        
+        if t1 == '' or t2 == '':
+            return 0
+        
+        if len(t1) < len(t2):
+            t1, t2 = t2, t1
+
+        dp = [int(t2[0] == t1[0])] * len(t2) # previous row
+        dp_new = [0] * len(t2) # current row
+        
+        for j in range(1, len(t2)):
+            dp[j] = 1 if t2[j] == t1[0] else dp[j - 1]
+        
+        for i in range(1, len(t1)):
+            dp_new[0] = 1 if dp[0] == 1 or t2[0] == t1[i] else 0
+            for j in range(1, len(t2)):
+                if t2[j] != t1[i]:
+                    dp_new[j] = max(dp[j], dp_new[j - 1])
+                else:
+                    dp_new[j] = dp[j - 1] + 1
+            dp, dp_new = dp_new, dp
+        
+        return dp[-1]
 ```
-
-注意点
-
-- go 切片初始化
-
-```go
-dp:=make([][]int,len(a)+1)
-for i:=0;i<=len(a);i++ {
-    dp[i]=make([]int,len(b)+1)
-}
-```
-
-- 从 1 开始遍历到最大长度
-- 索引需要减一
 
 ### [edit-distance](https://leetcode-cn.com/problems/edit-distance/)
 
@@ -592,38 +441,33 @@ for i:=0;i<=len(a);i++ {
 
 思路：和上题很类似，相等则不需要操作，否则取删除、插入、替换最小操作次数的值+1
 
-```go
-func minDistance(word1 string, word2 string) int {
-    // dp[i][j] 表示a字符串的前i个字符编辑为b字符串的前j个字符最少需要多少次操作
-    // dp[i][j] = OR(dp[i-1][j-1]，a[i]==b[j],min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1)
-    dp:=make([][]int,len(word1)+1)
-    for i:=0;i<len(dp);i++{
-        dp[i]=make([]int,len(word2)+1)
-    }
-    for i:=0;i<len(dp);i++{
-        dp[i][0]=i
-    }
-    for j:=0;j<len(dp[0]);j++{
-        dp[0][j]=j
-    }
-    for i:=1;i<=len(word1);i++{
-        for j:=1;j<=len(word2);j++{
-            // 相等则不需要操作
-            if word1[i-1]==word2[j-1] {
-                dp[i][j]=dp[i-1][j-1]
-            }else{ // 否则取删除、插入、替换最小操作次数的值+1
-                dp[i][j]=min(min(dp[i-1][j],dp[i][j-1]),dp[i-1][j-1])+1
-            }
-        }
-    }
-    return dp[len(word1)][len(word2)]
-}
-func min(a,b int)int{
-    if a>b{
-        return b
-    }
-    return a
-}
+```Python
+class Solution:
+    def minDistance(self, w1: str, w2: str) -> int:
+        
+        if w1 == '': return len(w2)
+        if w2 == '': return len(w1)
+        
+        m, n = len(w1), len(w2)
+        if m < n:
+            w1, w2, m, n = w2, w1, n, m
+        
+        dp = [int(w1[0] != w2[0])] * n
+        dp_new = [0] * n
+        
+        for j in range(1, n):
+            dp[j] = dp[j - 1] + int(w2[j] != w1[0] or dp[j - 1] != j)
+        
+        for i in range(1, m):
+            dp_new[0] = dp[0] + int(w2[0] != w1[i] or dp[0] != i)
+            
+            for j in range(1, n):
+                dp_new[j] = min(dp[j - 1] + int(w2[j] != w1[i]), dp[j] + 1, dp_new[j - 1] + 1)
+                
+            dp, dp_new = dp_new, dp
+        
+        
+        return dp[-1]
 ```
 
 说明
@@ -638,73 +482,44 @@ func min(a,b int)int{
 
 思路：和其他 DP 不太一样，i 表示钱或者容量
 
-```go
-func coinChange(coins []int, amount int) int {
-    // 状态 dp[i]表示金额为i时，组成的最小硬币个数
-    // 推导 dp[i]  = min(dp[i-1], dp[i-2], dp[i-5])+1, 前提 i-coins[j] > 0
-    // 初始化为最大值 dp[i]=amount+1
-    // 返回值 dp[n] or dp[n]>amount =>-1
-    dp:=make([]int,amount+1)
-    for i:=0;i<=amount;i++{
-        dp[i]=amount+1
-    }
-    dp[0]=0
-    for i:=1;i<=amount;i++{
-        for j:=0;j<len(coins);j++{
-            if  i-coins[j]>=0  {
-                dp[i]=min(dp[i],dp[i-coins[j]]+1)
-            }
-        }
-    }
-    if dp[amount] > amount {
-        return -1
-    }
-    return dp[amount]
-
-}
-func min(a,b int)int{
-    if a>b{
-        return b
-    }
-    return a
-}
+```Python
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        
+        dp = [0] * (amount + 1)
+         
+        for i in range(1, len(dp)):
+            dp[i] = float('inf')
+            
+            for coin in coins:
+                if i >= coin and dp[i - coin] + 1 < dp[i]:
+                    dp[i] = dp[i - coin] + 1
+            
+        return -1 if dp[amount] == float('inf') else dp[amount]
 ```
 
-注意
-
-> dp[i-a[j]] 决策 a[j]是否参与
 
 ### [backpack](https://www.lintcode.com/problem/backpack/description)
 
 > 在 n 个物品中挑选若干物品装入背包，最多能装多满？假设背包的大小为 m，每个物品的大小为 A[i]
 
-```go
-func backPack (m int, A []int) int {
-    // write your code here
-    // f[i][j] 前i个物品，是否能装j
-    // f[i][j] =f[i-1][j] f[i-1][j-a[i] j>a[i]
-    // f[0][0]=true f[...][0]=true
-    // f[n][X]
-    f:=make([][]bool,len(A)+1)
-    for i:=0;i<=len(A);i++{
-        f[i]=make([]bool,m+1)
-    }
-    f[0][0]=true
-    for i:=1;i<=len(A);i++{
-        for j:=0;j<=m;j++{
-            f[i][j]=f[i-1][j]
-            if j-A[i-1]>=0 && f[i-1][j-A[i-1]]{
-                f[i][j]=true
-            }
-        }
-    }
-    for i:=m;i>=0;i--{
-        if f[len(A)][i] {
-            return i
-        }
-    }
-    return 0
-}
+```Python
+class Solution:
+    def backPack(self, m, A):
+        
+        n = len(A)
+        
+        dp = [0] * (m + 1)
+        dp_new = [0] * (m + 1)
+        
+        for i in range(n):
+            for j in range(1, m + 1):
+                use_Ai = 0 if j - A[i] < 0 else dp[j - A[i]] + A[i]
+                dp_new[j] = max(dp[j], use_Ai)
+            
+            dp, dp_new = dp_new, dp
+        
+        return dp[-1]
 
 ```
 
@@ -715,32 +530,24 @@ func backPack (m int, A []int) int {
 
 思路：f[i][j] 前 i 个物品，装入 j 背包 最大价值
 
-```go
-func backPackII (m int, A []int, V []int) int {
-    // write your code here
-    // f[i][j] 前i个物品，装入j背包 最大价值
-    // f[i][j] =max(f[i-1][j] ,f[i-1][j-A[i]]+V[i]) 是否加入A[i]物品
-    // f[0][0]=0 f[0][...]=0 f[...][0]=0
-    f:=make([][]int,len(A)+1)
-    for i:=0;i<len(A)+1;i++{
-        f[i]=make([]int,m+1)
-    }
-    for i:=1;i<=len(A);i++{
-        for j:=0;j<=m;j++{
-            f[i][j]=f[i-1][j]
-            if j-A[i-1] >= 0{
-                f[i][j]=max(f[i-1][j],f[i-1][j-A[i-1]]+V[i-1])
-            }
-        }
-    }
-    return f[len(A)][m]
-}
-func max(a,b int)int{
-    if a>b{
-        return a
-    }
-    return b
-}
+```Python
+class Solution:
+    def backPackII(self, m, A, V):
+        
+        n = len(A)
+        
+        dp = [0] * (m + 1)
+        dp_new = [0] * (m + 1)
+        
+        for i in range(n):
+            for j in range(1, m + 1):
+                use_Ai = 0 if j - A[i] < 0 else dp[j - A[i]] + V[i] # previous problem is a special case of this problem that V(i) = A(i)
+                dp_new[j] = max(dp[j], use_Ai)
+            
+            dp, dp_new = dp_new, dp
+        
+        return dp[-1]
+
 ```
 
 ## 练习
