@@ -19,18 +19,22 @@
 
 > 给定一个排序链表，删除所有重复的元素，使得每个元素只出现一次。
 
-```go
-func deleteDuplicates(head *ListNode) *ListNode {
-    current := head
-    for current != nil {
-        // 全部删除完再移动到下一个元素
-        for current.Next != nil && current.Val == current.Next.Val {
-            current.Next = current.Next.Next
-        }
-        current = current.Next
-    }
-    return head
-}
+```Python
+class Solution:
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        
+        if head is None:
+            return head
+        
+        current = head
+        
+        while current.next is not None:
+            if current.next.val == current.val:
+                current.next = current.next.next
+            else:
+                current = current.next
+        
+        return head
 ```
 
 ### [remove-duplicates-from-sorted-list-ii](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii/)
@@ -39,29 +43,33 @@ func deleteDuplicates(head *ListNode) *ListNode {
 
 思路：链表头结点可能被删除，所以用 dummy node 辅助删除
 
-```go
-func deleteDuplicates(head *ListNode) *ListNode {
-    if head == nil {
-        return head
-    }
-    dummy := &ListNode{Val: 0}
-    dummy.Next = head
-    head = dummy
-
-    var rmVal int
-    for head.Next != nil && head.Next.Next != nil {
-        if head.Next.Val == head.Next.Next.Val {
-            // 记录已经删除的值，用于后续节点判断
-            rmVal = head.Next.Val
-            for head.Next != nil && head.Next.Val == rmVal  {
-                head.Next = head.Next.Next
-            }
-        } else {
-            head = head.Next
-        }
-    }
-    return dummy.Next
-}
+```Python
+class Solution:
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        
+        if head is None:
+            return head
+        
+        dummy = ListNode(next=head)
+        
+        current, peek = dummy, head
+        find_dup = False
+        while peek.next is not None:
+            if peek.next.val == peek.val:
+                find_dup = True
+                peek.next = peek.next.next
+            else:
+                if find_dup:
+                    find_dup = False
+                    current.next = current.next.next
+                else:
+                    current = current.next
+                peek = peek.next
+        
+        if find_dup:
+            current.next = current.next.next
+        
+        return dummy.next
 ```
 
 注意点
@@ -73,71 +81,68 @@ func deleteDuplicates(head *ListNode) *ListNode {
 
 > 反转一个单链表。
 
-思路：用一个 prev 节点保存向前指针，temp 保存向后的临时指针
+- 思路：将当前结点放置到头结点
 
-```go
-func reverseList(head *ListNode) *ListNode {
-    var prev *ListNode
-    for head != nil {
-        // 保存当前head.Next节点，防止重新赋值后被覆盖
-        // 一轮之后状态：nil<-1 2->3->4
-        //              prev   head
-        temp := head.Next
-        head.Next = prev
-        // pre 移动
-        prev = head
-        // head 移动
-        head = temp
-    }
-    return prev
-}
+```Python
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        
+        if head is None:
+            return head
+        
+        tail = head
+        while tail.next is not None:
+            # put tail.next to head  
+            tmp = tail.next
+            tail.next = tail.next.next
+            tmp.next = head
+            head = tmp
+        
+        return head
+```
+- Recursive method is tricky
+```Python
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        
+        if head is None or head.next is None:
+            return head
+        
+        rev_next = self.reverseList(head.next)
+        head.next.next = head
+        head.next = None
+        
+        return rev_next
 ```
 
 ### [reverse-linked-list-ii](https://leetcode-cn.com/problems/reverse-linked-list-ii/)
 
 > 反转从位置  *m*  到  *n*  的链表。请使用一趟扫描完成反转。
 
-思路：先遍历到 m 处，翻转，再拼接后续，注意指针处理
+思路：先找到 m 处, 再反转 n - m 次即可
 
-```go
-func reverseBetween(head *ListNode, m int, n int) *ListNode {
-    // 思路：先遍历到m处，翻转，再拼接后续，注意指针处理
-    // 输入: 1->2->3->4->5->NULL, m = 2, n = 4
-    if head == nil {
-        return head
-    }
-    // 头部变化所以使用dummy node
-    dummy := &ListNode{Val: 0}
-    dummy.Next = head
-    head = dummy
-    // 最开始：0->1->2->3->4->5->nil
-    var pre *ListNode
-    var i = 0
-    for i < m {
-        pre = head
-        head = head.Next
-        i++
-    }
-    // 遍历之后： 1(pre)->2(head)->3->4->5->NULL
-    // i = 1
-    var j = i
-    var next *ListNode
-    // 用于中间节点连接
-    var mid = head
-    for head != nil && j <= n {
-        // 第一次循环： 1 nil<-2 3->4->5->nil
-        temp := head.Next
-        head.Next = next
-        next = head
-        head = temp
-        j++
-    }
-    // 循环需要执行四次
-    // 循环结束：1 nil<-2<-3<-4 5(head)->nil
-    pre.Next = next
-    mid.Next = head
-    return dummy.Next
-}
+```Python
+class Solution:
+    def reverseBetween(self, head: ListNode, m: int, n: int) -> ListNode:
+        
+        if head is None:
+            return head
+        
+        n -= m # number of times of reverse
+        
+        curr = dummy = ListNode(next=head)
+        while m > 1: # find node at m - 1
+            curr = curr.next
+            m -= 1
+        
+        start = curr.next
+        while n > 0: # reverse n - m times
+            tmp = start.next
+            start.next = tmp.next
+            tmp.next = curr.next
+            curr.next = tmp
+            n -= 1
+        return dummy.next
 ```
 
 ### [merge-two-sorted-lists](https://leetcode-cn.com/problems/merge-two-sorted-lists/)
@@ -146,34 +151,26 @@ func reverseBetween(head *ListNode, m int, n int) *ListNode {
 
 思路：通过 dummy node 链表，连接各个元素
 
-```go
-func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
-    dummy := &ListNode{Val: 0}
-    head := dummy
-    for l1 != nil && l2 != nil {
-        if l1.Val < l2.Val {
-            head.Next = l1
-            l1 = l1.Next
-        } else {
-            head.Next = l2
-            l2 = l2.Next
-        }
-        head = head.Next
-    }
-    // 连接l1 未处理完节点
-    for l1 != nil {
-        head.Next = l1
-        head = head.Next
-        l1 = l1.Next
-    }
-    // 连接l2 未处理完节点
-    for l2 != nil {
-        head.Next = l2
-        head = head.Next
-        l2 = l2.Next
-    }
-    return dummy.Next
-}
+```Python
+class Solution:
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        
+        tail = dummy = ListNode()
+        while l1 is not None and l2 is not None:
+            if l1.val > l2.val:
+                tail.next = l2
+                l2 = l2.next
+            else:
+                tail.next = l1
+                l1 = l1.next
+            tail = tail.next
+                
+        if l1 is None:
+            tail.next = l2
+        else:
+            tail.next = l1
+
+        return dummy.next
 ```
 
 ### [partition-list](https://leetcode-cn.com/problems/partition-list/)
@@ -183,34 +180,24 @@ func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
 思路：将大于 x 的节点，放到另外一个链表，最后连接这两个链表
 
 ```go
-func partition(head *ListNode, x int) *ListNode {
-    // 思路：将大于x的节点，放到另外一个链表，最后连接这两个链表
-    // check
-    if head == nil {
-        return head
-    }
-    headDummy := &ListNode{Val: 0}
-    tailDummy := &ListNode{Val: 0}
-    tail := tailDummy
-    headDummy.Next = head
-    head = headDummy
-    for head.Next != nil {
-        if head.Next.Val < x {
-            head = head.Next
-        } else {
-            // 移除<x节点
-            t := head.Next
-            head.Next = head.Next.Next
-            // 放到另外一个链表
-            tail.Next = t
-            tail = tail.Next
-        }
-    }
-    // 拼接两个链表
-    tail.Next = nil
-    head.Next = tailDummy.Next
-    return headDummy.Next
-}
+class Solution:
+    def partition(self, head: ListNode, x: int) -> ListNode:
+        
+        p = l = ListNode()
+        q = s = ListNode(next=head)
+        
+        while q.next is not None:
+            if q.next.val < x:
+                q = q.next
+            else:
+                p.next = q.next
+                q.next = q.next.next
+                p = p.next
+        
+        p.next = None
+        q.next = l.next
+        
+	return s.next
 ```
 
 哑巴节点使用场景
@@ -221,66 +208,47 @@ func partition(head *ListNode, x int) *ListNode {
 
 > 在  *O*(*n* log *n*) 时间复杂度和常数级空间复杂度下，对链表进行排序。
 
-思路：归并排序，找中点和合并操作
+思路：归并排序，slow-fast找中点
 
-```go
-func sortList(head *ListNode) *ListNode {
-    // 思路：归并排序，找中点和合并操作
-    return mergeSort(head)
-}
-func findMiddle(head *ListNode) *ListNode {
-    // 1->2->3->4->5
-    slow := head
-    fast := head.Next
-    // 快指针先为nil
-    for fast !=nil && fast.Next != nil {
-        fast = fast.Next.Next
-        slow = slow.Next
-    }
-    return slow
-}
-func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
-    dummy := &ListNode{Val: 0}
-    head := dummy
-    for l1 != nil && l2 != nil {
-        if l1.Val < l2.Val {
-            head.Next = l1
-            l1 = l1.Next
-        } else {
-            head.Next = l2
-            l2 = l2.Next
-        }
-        head = head.Next
-    }
-    // 连接l1 未处理完节点
-    for l1 != nil {
-        head.Next = l1
-        head = head.Next
-        l1 = l1.Next
-    }
-    // 连接l2 未处理完节点
-    for l2 != nil {
-        head.Next = l2
-        head = head.Next
-        l2 = l2.Next
-    }
-    return dummy.Next
-}
-func mergeSort(head *ListNode) *ListNode {
-    // 如果只有一个节点 直接就返回这个节点
-    if head == nil || head.Next == nil{
-        return head
-    }
-    // find middle
-    middle := findMiddle(head)
-    // 断开中间节点
-    tail := middle.Next
-    middle.Next = nil
-    left := mergeSort(head)
-    right := mergeSort(tail)
-    result := mergeTwoLists(left, right)
-    return result
-}
+```Python
+class Solution:
+    
+    def _merge(self, l1, l2):
+        tail = l_merge = ListNode()
+        
+        while l1 is not None and l2 is not None:
+            if l1.val > l2.val:
+                tail.next = l2
+                l2 = l2.next
+            else:
+                tail.next = l1
+                l1 = l1.next
+            tail = tail.next
+
+        if l1 is not None:
+            tail.next = l1
+        else:
+            tail.next = l2
+        
+        return l_merge.next
+    
+    def _findmid(self, head):
+        slow, fast = head, head.next
+        while fast is not None and fast.next is not None:
+            fast = fast.next.next
+            slow = slow.next
+        
+        return slow
+    
+    def sortList(self, head: ListNode) -> ListNode:
+        if head is None or head.next is None:
+            return head
+        
+        mid = self._findmid(head)
+        tail = mid.next
+        mid.next = None # break from middle
+        
+        return self._merge(self.sortList(head), self.sortList(tail))
 ```
 
 注意点
@@ -296,97 +264,66 @@ func mergeSort(head *ListNode) *ListNode {
 
 思路：找到中点断开，翻转后面部分，然后合并前后两个链表
 
-```go
-func reorderList(head *ListNode)  {
-    // 思路：找到中点断开，翻转后面部分，然后合并前后两个链表
-    if head == nil {
+```Python
+class Solution:
+    
+    def reverseList(self, head: ListNode) -> ListNode:
+        
+        prev, curr = None, head
+        
+        while curr is not None:
+            curr.next, prev, curr = prev, curr, curr.next
+            
+        return prev
+    
+    def reorderList(self, head: ListNode) -> None:
+        """
+        Do not return anything, modify head in-place instead.
+        """
+        if head is None or head.next is None or head.next.next is None:
+            return
+        
+        slow, fast = head, head.next
+        while fast is not None and fast.next is not None:
+            fast = fast.next.next
+            slow = slow.next
+        
+        h, m = head, slow.next
+        slow.next = None
+        
+        m = self.reverseList(m)
+        
+        while h is not None and m is not None:
+            p = m.next
+            m.next = h.next
+            h.next = m
+            h = h.next.next
+            m = p
+            
         return
-    }
-    mid := findMiddle(head)
-    tail := reverseList(mid.Next)
-    mid.Next = nil
-    head = mergeTwoLists(head, tail)
-}
-func findMiddle(head *ListNode) *ListNode {
-    fast := head.Next
-    slow := head
-    for fast != nil && fast.Next != nil {
-        fast = fast.Next.Next
-        slow = slow.Next
-    }
-    return slow
-}
-func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
-    dummy := &ListNode{Val: 0}
-    head := dummy
-    toggle := true
-    for l1 != nil && l2 != nil {
-        // 节点切换
-        if toggle {
-            head.Next = l1
-            l1 = l1.Next
-        } else {
-            head.Next = l2
-            l2 = l2.Next
-        }
-        toggle = !toggle
-        head = head.Next
-    }
-    // 连接l1 未处理完节点
-    for l1 != nil {
-        head.Next = l1
-        head = head.Next
-        l1 = l1.Next
-    }
-    // 连接l2 未处理完节点
-    for l2 != nil {
-        head.Next = l2
-        head = head.Next
-        l2 = l2.Next
-    }
-    return dummy.Next
-}
-func reverseList(head *ListNode) *ListNode {
-    var prev *ListNode
-    for head != nil {
-        // 保存当前head.Next节点，防止重新赋值后被覆盖
-        // 一轮之后状态：nil<-1 2->3->4
-        //              prev   head
-        temp := head.Next
-        head.Next = prev
-        // pre 移动
-        prev = head
-        // head 移动
-        head = temp
-    }
-    return prev
-}
 ```
 
 ### [linked-list-cycle](https://leetcode-cn.com/problems/linked-list-cycle/)
 
 > 给定一个链表，判断链表中是否有环。
 
-思路：快慢指针，快慢指针相同则有环，证明：如果有环每走一步快慢指针距离会减 1
+思路1：Hash Table 记录所有结点判断重复，空间复杂度 O(n) 非最优，时间复杂度 O(n) 但必然需要 n 次循环
+思路2：快慢指针，快慢指针相同则有环，证明：如果有环每走一步快慢指针距离会减 1，空间复杂度 O(1) 最优，时间复杂度 O(n) 但循环次数小于等于 n
 ![fast_slow_linked_list](https://img.fuiboom.com/img/fast_slow_linked_list.png)
 
-```go
-func hasCycle(head *ListNode) bool {
-    // 思路：快慢指针 快慢指针相同则有环，证明：如果有环每走一步快慢指针距离会减1
-    if head == nil {
-        return false
-    }
-    fast := head.Next
-    slow := head
-    for fast != nil && fast.Next != nil {
-        if fast.Val == slow.Val {
-            return true
-        }
-        fast = fast.Next.Next
-        slow = slow.Next
-    }
-    return false
-}
+```Python
+class Solution:
+    def hasCycle(self, head: ListNode) -> bool:
+        
+        slow = fast = head
+        
+        while fast is not None and fast.next is not None:
+            slow = slow.next
+	    fast = fast.next.next
+            if fast == slow:
+                return True
+        
+        return False
 ```
 
 ### [linked-list-cycle-ii](https://leetcode-cn.com/problems/linked-list-cycle-ii/)
@@ -396,32 +333,24 @@ func hasCycle(head *ListNode) bool {
 思路：快慢指针，快慢相遇之后，慢指针回到头，快慢指针步调一致一起移动，相遇点即为入环点
 ![cycled_linked_list](https://img.fuiboom.com/img/cycled_linked_list.png)
 
-```go
-func detectCycle(head *ListNode) *ListNode {
-    // 思路：快慢指针，快慢相遇之后，慢指针回到头，快慢指针步调一致一起移动，相遇点即为入环点
-    if head == nil {
-        return head
-    }
-    fast := head.Next
-    slow := head
+```Python
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:
+        
+        slow = fast = head
+        
+        while fast is not None and fast.next is not None:
+            slow = slow.next
+            fast = fast.next.next
+            
+            if slow == fast:
+                slow = head
+                while fast != slow:
+                    fast = fast.next
+                    slow = slow.next
+                return slow
 
-    for fast != nil && fast.Next != nil {
-        if fast == slow {
-            // 慢指针重新从头开始移动，快指针从第一次相交点下一个节点开始移动
-            fast = head
-            slow = slow.Next // 注意
-            // 比较指针对象（不要比对指针Val值）
-            for fast != slow {
-                fast = fast.Next
-                slow = slow.Next
-            }
-            return slow
-        }
-        fast = fast.Next.Next
-        slow = slow.Next
-    }
-    return nil
-}
+        return None
 ```
 
 坑点
@@ -429,36 +358,8 @@ func detectCycle(head *ListNode) *ListNode {
 - 指针比较时直接比较对象，不要用值比较，链表中有可能存在重复值情况
 - 第一次相交后，快指针需要从下一个节点开始和头指针一起匀速移动
 
-另外一种方式是 fast=head,slow=head
 
-```go
-func detectCycle(head *ListNode) *ListNode {
-    // 思路：快慢指针，快慢相遇之后，其中一个指针回到头，快慢指针步调一致一起移动，相遇点即为入环点
-    // nb+a=2nb+a
-    if head == nil {
-        return head
-    }
-    fast := head
-    slow := head
-
-    for fast != nil && fast.Next != nil {
-        fast = fast.Next.Next
-        slow = slow.Next
-        if fast == slow {
-            // 指针重新从头开始移动
-            fast = head
-            for fast != slow {
-                fast = fast.Next
-                slow = slow.Next
-            }
-            return slow
-        }
-    }
-    return nil
-}
-```
-
-这两种方式不同点在于，**一般用 fast=head.Next 较多**，因为这样可以知道中点的上一个节点，可以用来删除等操作。
+注意，此题中使用 slow = fast = head 是为了保证最后找环起始点时移动步数相同，但是作为找中点使用时**一般用 fast=head.Next 较多**，因为这样可以知道中点的上一个节点，可以用来删除等操作。
 
 - fast 如果初始化为 head.Next 则中点在 slow.Next
 - fast 初始化为 head,则中点在 slow
@@ -467,51 +368,28 @@ func detectCycle(head *ListNode) *ListNode {
 
 > 请判断一个链表是否为回文链表。
 
-```go
-func isPalindrome(head *ListNode) bool {
-    // 1 2 nil
-    // 1 2 1 nil
-    // 1 2 2 1 nil
-    if head==nil{
-        return true
-    }
-    slow:=head
-    // fast如果初始化为head.Next则中点在slow.Next
-    // fast初始化为head,则中点在slow
-    fast:=head.Next
-    for fast!=nil&&fast.Next!=nil{
-        fast=fast.Next.Next
-        slow=slow.Next
-    }
+- 思路：O(1) 空间复杂度的解法需要破坏原链表（找中点 -> 反转后半个list -> 判断回文），在实际应用中往往还需要复原（后半个list再反转一次后拼接），操作比较复杂，这里给出更工程化的做法
 
-    tail:=reverse(slow.Next)
-    // 断开两个链表(需要用到中点前一个节点)
-    slow.Next=nil
-    for head!=nil&&tail!=nil{
-        if head.Val!=tail.Val{
-            return false
-        }
-        head=head.Next
-        tail=tail.Next
-    }
-    return true
-
-}
-
-func reverse(head *ListNode)*ListNode{
-    // 1->2->3
-    if head==nil{
-        return head
-    }
-    var prev *ListNode
-    for head!=nil{
-        t:=head.Next
-        head.Next=prev
-        prev=head
-        head=t
-    }
-    return prev
-}
+```Python
+class Solution:
+    def isPalindrome(self, head: ListNode) -> bool:
+        
+        s = []
+        slow = fast = head
+        while fast is not None and fast.next is not None:
+            s.append(slow.val)
+            slow = slow.next
+            fast = fast.next.next
+        
+        if fast is not None:
+            slow = slow.next
+        
+        while len(s) > 0:
+            if slow.val != s.pop():
+                return False
+            slow = slow.next
+            
+        return True
 ```
 
 ### [copy-list-with-random-pointer](https://leetcode-cn.com/problems/copy-list-with-random-pointer/)
@@ -519,42 +397,67 @@ func reverse(head *ListNode)*ListNode{
 > 给定一个链表，每个节点包含一个额外增加的随机指针，该指针可以指向链表中的任何节点或空节点。
 > 要求返回这个链表的 深拷贝。
 
-思路：1、hash 表存储指针，2、复制节点跟在原节点后面
+- 思路1：hash table 存储 random 指针的连接关系
 
-```go
-func copyRandomList(head *Node) *Node {
-	if head == nil {
-		return head
-	}
-	// 复制节点，紧挨到到后面
-	// 1->2->3  ==>  1->1'->2->2'->3->3'
-	cur := head
-	for cur != nil {
-		clone := &Node{Val: cur.Val, Next: cur.Next}
-		temp := cur.Next
-		cur.Next = clone
-		cur = temp
-	}
-	// 处理random指针
-	cur = head
-	for cur != nil {
-		if cur.Random != nil {
-			cur.Next.Random = cur.Random.Next
-		}
-		cur = cur.Next.Next
-	}
-	// 分离两个链表
-	cur = head
-	cloneHead := cur.Next
-	for cur != nil && cur.Next != nil {
-		temp := cur.Next
-		cur.Next = cur.Next.Next
-		cur = temp
-	}
-	// 原始链表头：head 1->2->3
-	// 克隆的链表头：cloneHead 1'->2'->3'
-	return cloneHead
-}
+```Python
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        
+        if head is None:
+            return None
+        
+        parent = collections.defaultdict(list)
+        
+        out = Node(0)
+        o, n = head, out
+        while o is not None:
+            n.next = Node(o.val)
+            n = n.next
+            if o.random is not None:
+                parent[o.random].append(n)
+            o = o.next
+            
+        o, n = head, out.next
+        while o is not None:
+            if o in parent:
+                for p in parent[o]:
+                    p.random = n
+            o = o.next
+            n = n.next
+        
+        return out.next
+```
+
+- 思路2：复制结点跟在原结点后面，间接维护连接关系，优化空间复杂度，建立好新 list 的 random 链接后分离
+
+```Python
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        
+        if head is None:
+            return None
+        
+        p = head
+        while p is not None:
+            p.next = Node(p.val, p.next)
+            p = p.next.next
+        
+        p = head
+        while p is not None:
+            if p.random is not None:
+                p.next.random = p.random.next
+            p = p.next.next
+        
+        new = head.next
+        o, n = head, new
+        while n.next is not None:
+            o.next = n.next
+            n.next = n.next.next
+            o = o.next
+            n = n.next
+        o.next = None
+        
+        return new
 ```
 
 ## 总结
