@@ -85,8 +85,17 @@
 
 [我看过的 100 本书](https://github.com/greyireland/awesome-programming-books-1)
 
-## 后续
+## 更新计划
 
 持续更新中，觉得还可以的话点个 **star** 收藏呀 ⭐️~
 
 【 Github 】[https://github.com/greyireland/algorithm-pattern](https://github.com/greyireland/algorithm-pattern) ⭐️
+
+## 完成打卡
+
+完成计划之后，可以提交 Pull requests，在下面添加自己的项目仓库，完成自己的算法模板打卡呀~
+
+| 完成 | 用户                                              | 项目地址                                                            |
+| ---- | ------------------------------------------------- | ------------------------------------------------------------------- |
+| ✅   | [wardseptember](https://github.com/wardseptember) | [notes(Java 实现)](https://github.com/wardseptember/notes)          |
+| 🕒   | [dashidhy](https://github.com/dashidhy) | [algorithm-pattern-python(Python 实现)](https://github.com/dashidhy/algorithm-pattern-python) |

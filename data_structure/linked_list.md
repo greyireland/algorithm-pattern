@@ -379,7 +379,8 @@ func hasCycle(head *ListNode) bool {
     fast := head.Next
     slow := head
     for fast != nil && fast.Next != nil {
-        if fast.Val == slow.Val {
+        // 比较指针是否相等（不要使用val比较！）
+        if fast == slow {
             return true
         }
         fast = fast.Next.Next
