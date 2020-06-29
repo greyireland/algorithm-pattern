@@ -40,6 +40,7 @@
 - [滑动窗口思想](https://github.com/greyireland/algorithm-pattern/blob/master/advanced_algorithm/slide_window.md)
 - [二叉搜索树](https://github.com/greyireland/algorithm-pattern/blob/master/advanced_algorithm/binary_search_tree.md)
 - [回溯法](https://github.com/greyireland/algorithm-pattern/blob/master/advanced_algorithm/backtrack.md)
+- [单调栈](./advanced_algorithm/monotonous_stack.md)
 
 ## 心得体会
 
