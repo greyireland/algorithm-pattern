@@ -138,6 +138,7 @@ func nextGreaterElements(nums []int) []int {
 
 ## 练习
 
+- [ ] [daily-temperatures](https://leetcode-cn.com/problems/daily-temperatures/)
 - [ ] [remove-k-digits](https://leetcode-cn.com/problems/remove-k-digits/)
 - [ ] [maximal-rectangle](https://leetcode-cn.com/problems/maximal-rectangle/)
 - [ ] [trapping-rain-water](https://leetcode-cn.com/problems/trapping-rain-water/)(challenge)
