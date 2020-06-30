@@ -582,6 +582,6 @@ func copyRandomList(head *Node) *Node {
 - [ ] [sort-list](https://leetcode-cn.com/problems/sort-list/)
 - [ ] [reorder-list](https://leetcode-cn.com/problems/reorder-list/)
 - [ ] [linked-list-cycle](https://leetcode-cn.com/problems/linked-list-cycle/)
-- [ ] [linked-list-cycle-ii](https://leetcode-cn.com/problems/https://leetcode-cn.com/problems/linked-list-cycle-ii/)
+- [ ] [linked-list-cycle-ii](https://leetcode-cn.com/problems/linked-list-cycle-ii/)
 - [ ] [palindrome-linked-list](https://leetcode-cn.com/problems/palindrome-linked-list/)
 - [ ] [copy-list-with-random-pointer](https://leetcode-cn.com/problems/copy-list-with-random-pointer/)
