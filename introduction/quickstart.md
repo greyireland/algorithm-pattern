@@ -17,25 +17,34 @@
 
 思路：核心点遍历给定字符串字符，判断以当前字符开头字符串是否等于目标字符串
 
-```go
-func strStr(haystack string, needle string) int {
-    if len(needle) == 0 {
-        return 0
+```c++
+int strStr(string haystack, string needle) {
+    if (needle.empty())
+    {
+        return 0;
     }
-    var i, j int
-    // i不需要到len-1
-    for i = 0; i < len(haystack)-len(needle)+1; i++ {
-        for j = 0; j < len(needle); j++ {
-            if haystack[i+j] != needle[j] {
-                break
+
+    if (haystack.size() < needle.size())
+    {
+        return -1;
+    }
+
+    int j;
+    // haystack.size() - needle.size() means haystack minus needle
+    // however, the last chance we find the needle is start from haystack - needle + 1!
+    for (int i = 0; i < haystack.size() - needle.size() + 1; ++i) {
+        for (j = 0; j < needle.size(); ++j) {
+            if (haystack[i+j] != needle[j])
+            {
+                break;
             }
         }
-        // 判断字符串长度是否相等
-        if len(needle) == j {
-            return i
+        if (j == needle.size())
+        {
+            return i;
         }
     }
-    return -1
+    return -1;
 }
 ```
 
