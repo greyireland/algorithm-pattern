@@ -486,25 +486,26 @@ func wordBreak(s string, wordDict []string) bool {
 	}
 	f := make([]bool, len(s)+1)
 	f[0] = true
-	max := maxLen(wordDict)
+	max,dict := maxLen(wordDict)
 	for i := 1; i <= len(s); i++ {
 		l := 0
 		if i - max > 0 {
 			l = i - max
 		}
 		for j := l; j < i; j++ {
-			if f[j] && inDict(s[j:i]) {
+			if f[j] && inDict(s[j:i],dict) {
 				f[i] = true
-				break
+                break
 			}
 		}
 	}
 	return f[len(s)]
 }
 
-var dict = make(map[string]bool)
 
-func maxLen(wordDict []string) int {
+
+func maxLen(wordDict []string) (int,map[string]bool) {
+    dict := make(map[string]bool)
 	max := 0
 	for _, v := range wordDict {
 		dict[v] = true
@@ -512,10 +513,10 @@ func maxLen(wordDict []string) int {
 			max = len(v)
 		}
 	}
-	return max
+	return max,dict
 }
 
-func inDict(s string) bool {
+func inDict(s string,dict map[string]bool) bool {
 	_, ok := dict[s]
 	return ok
 }
