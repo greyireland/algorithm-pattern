@@ -356,6 +356,7 @@ func canJump(nums []int) bool {
 > 你的目标是使用最少的跳跃次数到达数组的最后一个位置。
 
 ```go
+// v1动态规划（其他语言超时参考v2）
 func jump(nums []int) int {
     // 状态：f[i] 表示从起点到当前位置最小次数
     // 推导：f[i] = f[j],a[j]+j >=i,min(f[j]+1)
@@ -381,6 +382,26 @@ func min(a, b int) int {
     }
     return a
 }
+```
+
+```go
+// v2 动态规划+贪心优化
+func jump(nums []int) int {
+    n:=len(nums)
+    f := make([]int, n)
+    f[0] = 0
+    for i := 1; i < n; i++ {
+        // 取第一个能跳到当前位置的点即可
+        // 因为跳跃次数的结果集是单调递增的，所以贪心思路是正确的
+        idx:=0
+        for idx<n&&idx+nums[idx]<i{
+            idx++
+        }
+        f[i]=f[idx]+1
+    }
+    return f[n-1]
+}
+
 ```
 
 ### [palindrome-partitioning-ii](https://leetcode-cn.com/problems/palindrome-partitioning-ii/)
