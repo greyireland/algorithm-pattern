@@ -488,7 +488,11 @@ func wordBreak(s string, wordDict []string) bool {
 	f[0] = true
 	max := maxLen(wordDict)
 	for i := 1; i <= len(s); i++ {
-		for j := i - max; j < i && j >= 0; j++ {
+		l := 0
+		if i - max > 0 {
+			l = i - max
+		}
+		for j := l; j < i; j++ {
 			if f[j] && inDict(s[j:i]) {
 				f[i] = true
 				break
