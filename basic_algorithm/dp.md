@@ -44,44 +44,25 @@
 
 动态规划，自底向上
 
-```go
-func minimumTotal(triangle [][]int) int {
-	if len(triangle) == 0 || len(triangle[0]) == 0 {
-		return 0
-	}
-	// 1、状态定义：f[i][j] 表示从i,j出发，到达最后一层的最短路径
-	var l = len(triangle)
-	var f = make([][]int, l)
-	// 2、初始化
-	for i := 0; i < l; i++ {
-		for j := 0; j < len(triangle[i]); j++ {
-			if f[i] == nil {
-				f[i] = make([]int, len(triangle[i]))
-			}
-			f[i][j] = triangle[i][j]
-		}
-	}
-	// 3、递推求解
-	for i := len(triangle) - 2; i >= 0; i-- {
-		for j := 0; j < len(triangle[i]); j++ {
-			f[i][j] = min(f[i+1][j], f[i+1][j+1]) + triangle[i][j]
-		}
-	}
-	// 4、答案
-	return f[0][0]
+```c++
+minimumTotal(vector<vector<int>>& triangle) {
+    if (triangle.empty() || triangle[0].empty()) {
+        return 0;
+    }
+    auto rowNum = triangle.size();
+    auto cache = triangle;
+    for (int row = rowNum - 2; row >= 0; --row) {
+        for (int col = 0; col < triangle[row].size(); ++col) {
+            cache[row][col] = min(cache[row + 1][col], cache[row + 1][col + 1]) + triangle[row][col];
+        }
+    }
+    return cache[0][0];
 }
-func min(a, b int) int {
-	if a > b {
-		return b
-	}
-	return a
-}
-
 ```
 
 动态规划，自顶向下
 
-```go
+```c++
 // 测试用例：
 // [
 // [2],
@@ -89,48 +70,30 @@ func min(a, b int) int {
 // [6,5,7],
 // [4,1,8,3]
 // ]
-func minimumTotal(triangle [][]int) int {
-    if len(triangle) == 0 || len(triangle[0]) == 0 {
-        return 0
+int minimumTotal(vector<vector<int>>& triangle) {
+    if (triangle.empty() || triangle[0].empty()) {
+        return 0;
     }
-    // 1、状态定义：f[i][j] 表示从0,0出发，到达i,j的最短路径
-    var l = len(triangle)
-    var f = make([][]int, l)
-    // 2、初始化
-    for i := 0; i < l; i++ {
-        for j := 0; j < len(triangle[i]); j++ {
-            if f[i] == nil {
-                f[i] = make([]int, len(triangle[i]))
-            }
-            f[i][j] = triangle[i][j]
-        }
-    }
-    // 递推求解
-    for i := 1; i < l; i++ {
-        for j := 0; j < len(triangle[i]); j++ {
-            // 这里分为两种情况：
-            // 1、上一层没有左边值
-            // 2、上一层没有右边值
-            if j-1 < 0 {
-                f[i][j] = f[i-1][j] + triangle[i][j]
-            } else if j >= len(f[i-1]) {
-                f[i][j] = f[i-1][j-1] + triangle[i][j]
+    auto cache = triangle;
+    for (int row = 1; row < triangle.size(); ++row) {
+        int colNum = triangle[row].size();
+        int col = 0;
+        for (; col < colNum; ++col) {
+            if (col == 0) {
+                cache[row][col] = cache[row-1][col];
+            } else if (col >= triangle[row - 1].size()) {
+                cache[row][col] = cache[row - 1][col - 1];
             } else {
-                f[i][j] = min(f[i-1][j], f[i-1][j-1]) + triangle[i][j]
+                cache[row][col] = min(cache[row-1][col], cache[row-1][col-1]);
             }
+            cache[row][col] += triangle[row][col];
         }
     }
-    result := f[l-1][0]
-    for i := 1; i < len(f[l-1]); i++ {
-        result = min(result, f[l-1][i])
+    auto min = cache.back()[0];
+    for (const auto &item : cache.back()) {
+        min = std::min(min, item);
     }
-    return result
-}
-func min(a, b int) int {
-    if a > b {
-        return b
-    }
-    return a
+    return min;
 }
 ```
 
@@ -138,7 +101,7 @@ func min(a, b int) int {
 
 递归是一种程序的实现方式：函数的自我调用
 
-```go
+```c++
 Function(x) {
 	...
 	Funciton(x-1);
@@ -194,33 +157,25 @@ Function(x) {
 3、intialize: f[0][0] = A[0][0]、f[i][0] = sum(0,0 -> i,0)、 f[0][i] = sum(0,0 -> 0,i)
 4、answer: f[n-1][m-1]
 
-```go
-func minPathSum(grid [][]int) int {
-    // 思路：动态规划
-    // f[i][j] 表示i,j到0,0的和最小
-    if len(grid) == 0 || len(grid[0]) == 0 {
-        return 0
+```c++
+int minPathSum(vector<vector<int>>& grid) {
+    if (grid.empty() || grid[0].empty()) {
+        return 0;
     }
-    // 复用原来的矩阵列表
-    // 初始化：f[i][0]、f[0][j]
-    for i := 1; i < len(grid); i++ {
-        grid[i][0] = grid[i][0] + grid[i-1][0]
+    auto rowNum = grid.size();
+    auto colNum = grid[0].size();
+    for (int i = 1; i < rowNum; ++i) {
+        grid[i][0] = grid[i-1][0] + grid[i][0];
     }
-    for j := 1; j < len(grid[0]); j++ {
-        grid[0][j] = grid[0][j] + grid[0][j-1]
+    for (int i = 1; i < colNum; ++i) {
+        grid[0][i] = grid[0][i - 1] + grid[0][i];
     }
-    for i := 1; i < len(grid); i++ {
-        for j := 1; j < len(grid[i]); j++ {
-            grid[i][j] = min(grid[i][j-1], grid[i-1][j]) + grid[i][j]
+    for (int i = 1; i < rowNum; ++i) {
+        for (int j = 1; j < colNum; ++j) {
+            grid[i][j] = min(grid[i - 1][j], grid[i][j - 1]) + grid[i][j];
         }
     }
-    return grid[len(grid)-1][len(grid[0])-1]
-}
-func min(a, b int) int {
-    if a > b {
-        return b
-    }
-    return a
+    return grid[rowNum - 1][colNum - 1];
 }
 ```
 
@@ -230,24 +185,18 @@ func min(a, b int) int {
 > 机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
 > 问总共有多少条不同的路径？
 
-```go
-func uniquePaths(m int, n int) int {
-	// f[i][j] 表示i,j到0,0路径数
-	f := make([][]int, m)
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if f[i] == nil {
-				f[i] = make([]int, n)
-			}
-			f[i][j] = 1
-		}
-	}
-	for i := 1; i < m; i++ {
-		for j := 1; j < n; j++ {
-			f[i][j] = f[i-1][j] + f[i][j-1]
-		}
-	}
-	return f[m-1][n-1]
+```c++
+int uniquePaths(int m, int n) {
+    if (m == 0 || n == 0) {
+        return 0;
+    }
+    vector<vector<int>> cache(m, vector<int>(n, 1));
+    for (int i = 1; i < m; ++i) {
+        for (int j = 1; j < n; ++j) {
+            cache[i][j] = cache[i - 1][j] + cache[i][j - 1];
+        }
+    }
+    return cache[m - 1][n - 1];
 }
 ```
 
@@ -258,43 +207,32 @@ func uniquePaths(m int, n int) int {
 > 问总共有多少条不同的路径？
 > 现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
 
-```go
-func uniquePathsWithObstacles(obstacleGrid [][]int) int {
-	// f[i][j] = f[i-1][j] + f[i][j-1] 并检查障碍物
-	if obstacleGrid[0][0] == 1 {
-		return 0
-	}
-	m := len(obstacleGrid)
-	n := len(obstacleGrid[0])
-	f := make([][]int, m)
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if f[i] == nil {
-				f[i] = make([]int, n)
-			}
-			f[i][j] = 1
-		}
-	}
-	for i := 1; i < m; i++ {
-		if obstacleGrid[i][0] == 1 || f[i-1][0] == 0 {
-			f[i][0] = 0
-		}
-	}
-	for j := 1; j < n; j++ {
-		if obstacleGrid[0][j] == 1 || f[0][j-1] == 0 {
-			f[0][j] = 0
-		}
-	}
-	for i := 1; i < m; i++ {
-		for j := 1; j < n; j++ {
-			if obstacleGrid[i][j] == 1 {
-				f[i][j] = 0
-			} else {
-				f[i][j] = f[i-1][j] + f[i][j-1]
-			}
-		}
-	}
-	return f[m-1][n-1]
+```c++
+int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+    if (obstacleGrid.empty() || obstacleGrid[0].empty() || obstacleGrid[0][0]) {
+        return 0;
+    }
+
+    auto rowNum = obstacleGrid.size();
+    auto colNum = obstacleGrid[0].size();
+    auto &cache = obstacleGrid;
+    obstacleGrid[0][0] = !obstacleGrid[0][0];
+    for (int i = 1; i < colNum; ++i) {
+        cache[0][i] = !cache[0][i] && cache[0][i - 1];
+    }
+    for (int i = 1; i < rowNum; ++i) {
+        cache[i][0] = !cache[i][0] && cache[i - 1][0];
+    }
+    for (int i = 1; i < rowNum; ++i) {
+        for (int j = 1; j < colNum; ++j) {
+            if (cache[i][j]) {
+                cache[i][j] = 0;
+                continue;
+            }
+            cache[i][j] = cache[i - 1][j] + cache[i][j - 1];
+        }
+    }
+    return cache[rowNum - 1][colNum - 1];
 }
 ```
 
@@ -304,19 +242,13 @@ func uniquePathsWithObstacles(obstacleGrid [][]int) int {
 
 > 假设你正在爬楼梯。需要  *n*  阶你才能到达楼顶。
 
-```go
-func climbStairs(n int) int {
-    // f[i] = f[i-1] + f[i-2]
-    if n == 1 || n == 0 {
-        return n
+```c++
+int climbStairs(int n) {
+    vector<int> ret(n + 1, 1);
+    for (int i = 2; i < n + 1; ++i) {
+        ret[i] = ret[i - 1] + ret[i - 2];
     }
-    f := make([]int, n+1)
-    f[1] = 1
-    f[2] = 2
-    for i := 3; i <= n; i++ {
-        f[i] = f[i-1] + f[i-2]
-    }
-    return f[n]
+    return ret[n];
 }
 ```
 
@@ -326,26 +258,22 @@ func climbStairs(n int) int {
 > 数组中的每个元素代表你在该位置可以跳跃的最大长度。
 > 判断你是否能够到达最后一个位置。
 
-```go
-func canJump(nums []int) bool {
-    // 思路：看最后一跳
-    // 状态：f[i] 表示是否能从0跳到i
-    // 推导：f[i] = OR(f[j],j<i&&j能跳到i) 判断之前所有的点最后一跳是否能跳到当前点
-    // 初始化：f[0] = 0
-    // 结果： f[n-1]
-    if len(nums) == 0 {
-        return true
+```c++
+bool canJump(vector<int>& nums) {
+    if (nums.empty()) {
+        return true;
     }
-    f := make([]bool, len(nums))
-    f[0] = true
-    for i := 1; i < len(nums); i++ {
-        for j := 0; j < i; j++ {
-            if f[j] == true && nums[j]+j >= i {
-                f[i] = true
-            }
+    int farest = 0;
+    for (int i = 0; i < nums.size(); ++i) {
+        if (farest < i) {
+            return false;
+        }
+        farest = max(farest, nums[i] + i);
+        if (farest >= nums.size() - 1) {
+            return true;
         }
     }
-    return f[len(nums)-1]
+    return false;
 }
 ```
 

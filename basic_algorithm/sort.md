@@ -4,83 +4,77 @@
 
 ### 快速排序
 
-```go
-func QuickSort(nums []int) []int {
-    // 思路：把一个数组分为左右两段，左段小于右段
-    quickSort(nums, 0, len(nums)-1)
-    return nums
+```c++
+template<typename T>
+static void QuickSort(T arr[], int len) {
+    quickSort(arr, 0, len - 1);
+}
 
-}
-// 原地交换，所以传入交换索引
-func quickSort(nums []int, start, end int) {
-    if start < end {
-        // 分治法：divide
-        pivot := partition(nums, start, end)
-        quickSort(nums, 0, pivot-1)
-        quickSort(nums, pivot+1, end)
+template<typename T>
+static void quickSort(T arr[], int begin, int end) {
+    if (begin >= end) {
+        return;
     }
+    auto pivot = partition(arr, begin, end);
+    quickSort(arr, begin, pivot - 1);
+    quickSort(arr, pivot + 1, end);
 }
-// 分区
-func partition(nums []int, start, end int) int {
-    // 选取最后一个元素作为基准pivot
-    p := nums[end]
-    i := start
-    // 最后一个值就是基准所以不用比较
-    for j := start; j < end; j++ {
-        if nums[j] < p {
-            swap(nums, i, j)
-            i++
+
+template<typename T>
+static int partition(T arr[], int begin, int end) {
+    auto base = arr[end];
+    auto lessInsert = begin;
+    for (int i = begin; i < end; ++i) {
+        if (arr[i] < base) {
+            swap(arr[lessInsert++], arr[i]);
         }
     }
-    // 把基准值换到中间
-    swap(nums, i, end)
-    return i
-}
-// 交换两个元素
-func swap(nums []int, i, j int) {
-    t := nums[i]
-    nums[i] = nums[j]
-    nums[j] = t
+    swap(arr[lessInsert], arr[end]);
+    return lessInsert;
 }
 ```
 
 ### 归并排序
 
-```go
-func MergeSort(nums []int) []int {
-    return mergeSort(nums)
+```c++
+template<typename T>
+static void MergeSort(T arr[], int len) {
+    auto tmp = new T[len];
+    mergeSort(arr, 0, len - 1, tmp);
+    delete[] tmp;
 }
-func mergeSort(nums []int) []int {
-    if len(nums) <= 1 {
-        return nums
+
+template<typename T>
+static void mergeSort(T arr[], int begin, int end, T tmp[]) {
+    if (begin + 1 >= end) {
+        return;
     }
-    // 分治法：divide 分为两段
-    mid := len(nums) / 2
-    left := mergeSort(nums[:mid])
-    right := mergeSort(nums[mid:])
-    // 合并两段数据
-    result := merge(left, right)
-    return result
-}
-func merge(left, right []int) (result []int) {
-    // 两边数组合并游标
-    l := 0
-    r := 0
-    // 注意不能越界
-    for l < len(left) && r < len(right) {
-        // 谁小合并谁
-        if left[l] > right[r] {
-            result = append(result, right[r])
-            r++
-        } else {
-            result = append(result, left[l])
-            l++
-        }
+
+    auto mid = begin + (end - begin) / 2;
+    auto begin1 = begin;
+    auto end1 = mid;
+    auto begin2 = mid + 1;
+    auto end2 = end;
+    mergeSort(arr, begin1, end1, tmp);
+    mergeSort(arr, begin2, end2, tmp);
+
+    // merge two parts
+    auto index = begin;
+    while (begin1 <= end1 && begin2 <= end2) {
+        tmp[index++] = arr[begin1] < arr[begin2] ? arr[begin1++] : arr[begin2++];
     }
-    // 剩余部分合并
-    result = append(result, left[l:]...)
-    result = append(result, right[r:]...)
-    return
+
+    while (begin1 <= end1) {
+        tmp[index++] = arr[begin1++];
+    }
+
+    while (begin2 <= end2) {
+        tmp[index++] = arr[begin2++];
+    }
+
+    for (int i = begin; i <= end; ++i) {
+        arr[i] = tmp[i];
+    }
 }
 ```
 
@@ -98,55 +92,41 @@ func merge(left, right []int) (result []int) {
 
 核心代码
 
-```go
-package main
-
-func HeapSort(a []int) []int {
-    // 1、无序数组a
-	// 2、将无序数组a构建为一个大根堆
-	for i := len(a)/2 - 1; i >= 0; i-- {
-		sink(a, i, len(a))
-	}
-	// 3、交换a[0]和a[len(a)-1]
-	// 4、然后把前面这段数组继续下沉保持堆结构，如此循环即可
-	for i := len(a) - 1; i >= 1; i-- {
-		// 从后往前填充值
-		swap(a, 0, i)
-		// 前面的长度也减一
-		sink(a, 0, i)
-	}
-	return a
-}
-func sink(a []int, i int, length int) {
-	for {
-		// 左节点索引(从0开始，所以左节点为i*2+1)
-		l := i*2 + 1
-		// 有节点索引
-		r := i*2 + 2
-		// idx保存根、左、右三者之间较大值的索引
-		idx := i
-		// 存在左节点，左节点值较大，则取左节点
-		if l < length && a[l] > a[idx] {
-			idx = l
-		}
-		// 存在有节点，且值较大，取右节点
-		if r < length && a[r] > a[idx] {
-			idx = r
-		}
-		// 如果根节点较大，则不用下沉
-		if idx == i {
-			break
-		}
-		// 如果根节点较小，则交换值，并继续下沉
-		swap(a, i, idx)
-		// 继续下沉idx节点
-		i = idx
-	}
-}
-func swap(a []int, i, j int) {
-	a[i], a[j] = a[j], a[i]
+```c++
+template<typename T>
+static void HeapSort(T arr[], int len) {
+    // right leaf of a root = 2(n + 1) since n is start from 0
+    auto lastRoot = len / 2 - 1;
+    // 先自下而上构建堆
+    for (int i = lastRoot; i >= 0; --i) {
+        makeHeap(arr, i, len);
+    }
+    
+    for (int j = len - 1; j >= 0; --j) {
+        // 最大值放到后面
+        swap(arr[0], arr[j]);
+        // 底部都还是有序的，只动了根节点，自上而下更新堆
+        makeHeap(arr, 0, --len);
+    }
 }
 
+template<typename T>
+static void makeHeap(T arr[], int root, int len) {
+    auto left = root * 2 + 1;
+    auto right = (root + 1) * 2;
+    auto largest = root;
+    if (left < len && arr[left] > arr[largest]) {
+        largest = left;
+    }
+    if (right < len && arr[right] > arr[largest]) {
+        largest = right;
+    }
+    if (largest == root) {
+        return;
+    }
+    swap(arr[largest], arr[root]);
+    makeHeap(arr, largest, len);
+}
 ```
 
 ## 参考
