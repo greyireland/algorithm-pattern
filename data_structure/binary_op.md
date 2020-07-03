@@ -32,15 +32,15 @@ diff=(n&(n-1))^n
 
 > 给定一个**非空**整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
 
-```go
-func singleNumber(nums []int) int {
+```c++
+int singleNumber(vector<int>& nums) {
     // 10 ^10 == 00
     // 两个数异或就变成0
-    result:=0
-    for i:=0;i<len(nums);i++{
-        result=result^nums[i]
+    auto result = 0;
+    for (const auto &num : nums) {
+        result ^= num;
     }
-    return result
+    return result;
 }
 ```
 
@@ -98,14 +98,14 @@ func singleNumber(nums []int) []int {
 
 > 编写一个函数，输入是一个无符号整数，返回其二进制表达式中数字位数为 ‘1’  的个数（也被称为[汉明重量](https://baike.baidu.com/item/%E6%B1%89%E6%98%8E%E9%87%8D%E9%87%8F)）。
 
-```go
-func hammingWeight(num uint32) int {
-    res:=0
-    for num!=0{
-        num=num&(num-1)
-        res++
+```c++
+int hammingWeight(int n) {
+    auto ret = 0;
+    while (n != 0) {
+        n = n & (n - 1);
+        ++ret;
     }
-    return res
+    return ret;
 }
 ```
 
@@ -113,21 +113,23 @@ func hammingWeight(num uint32) int {
 
 > 给定一个非负整数  **num**。对于  0 ≤ i ≤ num  范围中的每个数字  i ，计算其二进制数中的 1 的数目并将它们作为数组返回。
 
-```go
-func countBits(num int) []int {
-    res:=make([]int,num+1)
-
-    for i:=0;i<=num;i++{
-        res[i]=count1(i)
+```c++
+vector<int> countBits(int num) {
+    vector<int> ret(num+1);
+    for (int i = 0; i <= num; ++i) {
+        ret[i] = hammingWeight(i);
     }
-    return res
+    return ret;
 }
-func count1(n int)(res int){
-    for n!=0{
-        n=n&(n-1)
-        res++
+
+int hammingWeight(int n) {
+    auto ret = 0;
+    while (n != 0) {
+        n = n & (n - 1);
+        ++ret;
     }
-    return
+
+    return ret;
 }
 ```
 
@@ -150,17 +152,17 @@ func countBits(num int) []int {
 
 思路：依次颠倒即可
 
-```go
-func reverseBits(num uint32) uint32 {
-    var res uint32
-    var pow int=31
-    for num!=0{
-        // 把最后一位取出来，左移之后累加到结果中
-        res+=(num&1)<<pow
-        num>>=1
-        pow--
+```c++
+uint32_t reverseBits(uint32_t n) {
+    uint32_t ret = 0; // 记得初始化，否则通不过
+    auto pow = 31;
+    while(n != 0) {
+        // 取最后一位进行左移
+        ret += (n & 1) << pow;
+        n >>= 1;
+        --pow;
     }
-    return res
+    return ret;
 }
 ```
 
