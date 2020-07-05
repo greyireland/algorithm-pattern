@@ -283,53 +283,22 @@ bool canJump(vector<int>& nums) {
 > 数组中的每个元素代表你在该位置可以跳跃的最大长度。
 > 你的目标是使用最少的跳跃次数到达数组的最后一个位置。
 
-```go
-// v1动态规划（其他语言超时参考v2）
-func jump(nums []int) int {
-    // 状态：f[i] 表示从起点到当前位置最小次数
-    // 推导：f[i] = f[j],a[j]+j >=i,min(f[j]+1)
-    // 初始化：f[0] = 0
-    // 结果：f[n-1]
-    f := make([]int, len(nums))
-    f[0] = 0
-    for i := 1; i < len(nums); i++ {
-        // f[i] 最大值为i
-        f[i] = i
-        // 遍历之前结果取一个最小值+1
-        for j := 0; j < i; j++ {
-            if nums[j]+j >= i {
-                f[i] = min(f[j]+1,f[i])
-            }
+```c++
+int jump(vector<int>& nums) {
+    int size = nums.size();
+    vector<int> cache(size);
+    cache[0] = 0;
+    // cache[i + 1] >= cache[i]
+    for (int i = 1, farest = 0; i < size; ++i) {
+        while (farest < size && farest + nums[farest] < i) {
+            ++farest;
         }
+        // 假设你总是可以到达数组的最后一个位置。
+        // 可以认定farest + nums[farest]一定会大于i
+        cache[i] = cache[farest] + 1;
     }
-    return f[len(nums)-1]
+    return cache.back();
 }
-func min(a, b int) int {
-    if a > b {
-        return b
-    }
-    return a
-}
-```
-
-```go
-// v2 动态规划+贪心优化
-func jump(nums []int) int {
-    n:=len(nums)
-    f := make([]int, n)
-    f[0] = 0
-    for i := 1; i < n; i++ {
-        // 取第一个能跳到当前位置的点即可
-        // 因为跳跃次数的结果集是单调递增的，所以贪心思路是正确的
-        idx:=0
-        for idx<n&&idx+nums[idx]<i{
-            idx++
-        }
-        f[i]=f[idx]+1
-    }
-    return f[n-1]
-}
-
 ```
 
 ### [palindrome-partitioning-ii](https://leetcode-cn.com/problems/palindrome-partitioning-ii/)
@@ -337,43 +306,37 @@ func jump(nums []int) int {
 > 给定一个字符串 _s_，将 _s_ 分割成一些子串，使每个子串都是回文串。
 > 返回符合要求的最少分割次数。
 
-```go
-func minCut(s string) int {
-	// state: f[i] "前i"个字符组成的子字符串需要最少几次cut(个数-1为索引)
-	// function: f[i] = MIN{f[j]+1}, j < i && [j+1 ~ i]这一段是一个回文串
-	// intialize: f[i] = i - 1 (f[0] = -1)
-	// answer: f[s.length()]
-	if len(s) == 0 || len(s) == 1 {
-		return 0
-	}
-	f := make([]int, len(s)+1)
-	f[0] = -1
-	f[1] = 0
-	for i := 1; i <= len(s); i++ {
-		f[i] = i - 1
-		for j := 0; j < i; j++ {
-			if isPalindrome(s, j, i-1) {
-				f[i] = min(f[i], f[j]+1)
-			}
-		}
-	}
-	return f[len(s)]
-}
-func min(a, b int) int {
-	if a > b {
-		return b
-	}
-	return a
-}
-func isPalindrome(s string, i, j int) bool {
-	for i < j {
-		if s[i] != s[j] {
-			return false
-		}
-		i++
-		j--
-	}
-	return true
+```c++
+int minCut(string s) {
+    if (s.size() <= 1) {
+        return 0;
+    }
+    auto size = s.size();
+    vector<int> cache(size);
+    for (int i = 0; i < size; ++i) {
+        cache[i] = i;
+    }
+    vector<vector<bool>> isPalindrome(size, vector<bool>(size));
+    for (int right = 0; right < size; ++right) {
+        for (int left = 0; left <= right; ++left) {
+            // 如果头尾相同，可能为回文！
+            // len < 3时，直接判断为回文
+            // len >= 3时，判断里面一层，左右往里缩一格
+            isPalindrome[left][right] = s[right] == s[left] && (right - left < 3 || isPalindrome[left + 1][right - 1]);
+        }
+    }
+    for (int i = 1; i < size; ++i) {
+        if (isPalindrome[0][i]) {
+            cache[i] = 0;
+            continue;
+        }
+        for (int j = 0; j < i; ++j) {
+            if (isPalindrome[j + 1][i]) {
+                cache[i] = min(cache[j] + 1, cache[i]);
+            }
+        }
+    }
+    return cache.back();
 }
 ```
 
