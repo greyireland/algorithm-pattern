@@ -348,38 +348,65 @@ int minCut(string s) {
 
 > 给定一个无序的整数数组，找到其中最长上升子序列的长度。
 
-```go
-func lengthOfLIS(nums []int) int {
-    // f[i] 表示从0开始到i结尾的最长序列长度
-    // f[i] = max(f[j])+1 ,a[j]<a[i]
-    // f[0...n-1] = 1
-    // max(f[0]...f[n-1])
-    if len(nums) == 0 || len(nums) == 1 {
-        return len(nums)
+```c++
+#pragma region 复杂度O(n^2)
+int lengthOfLIS1(vector<int>& nums) {
+    if (nums.size() < 2) {
+        return nums.size();
     }
-    f := make([]int, len(nums))
-    f[0] = 1
-    for i := 1; i < len(nums); i++ {
-        f[i] = 1
-        for j := 0; j < i; j++ {
-            if nums[j] < nums[i] {
-                f[i] = max(f[i], f[j]+1)
+
+    vector<int> cache(nums.size());
+    cache[0] = 1;
+    for (int i = 1; i < nums.size(); ++i) {
+        cache[i] = 1;
+        for (int j = 0; j < i; ++j) {
+            if (nums[j] < nums[i]) {
+                cache[i] = max(cache[i], cache[j] + 1);
             }
         }
     }
-    result := f[0]
-    for i := 1; i < len(nums); i++ {
-        result = max(result, f[i])
+    auto maxLen = cache[0];
+    for (const auto &item : cache) {
+        maxLen = max(maxLen, item);
     }
-    return result
+    return maxLen;
+}
+#pragma endregion
 
-}
-func max(a, b int) int {
-    if a > b {
-        return a
+#pragma region 复杂度O(n log n)
+// 题目给了提示，看到log n可以考虑往二分查找之类的上凑
+int lengthOfLIS(vector<int> &nums) {
+    int size = nums.size();
+    if (size < 2) {
+        return size;
     }
-    return b
+
+    // tail[i]表示长度为i + 1的子序列的最小末尾值
+    // tail必定单调递增，单调栈
+    // 如果当前节点大于栈顶，即，比最长子序列的末尾还大，入栈（长度+1
+    // 否则通过二分查找找到第一个比当前节点大的值，进行更新。子序列长度相同，末尾节点变小
+    vector<int> tail;
+    tail.push_back(nums.front());
+    for (int i = 1; i < size; ++i) {
+        if (nums[i] > tail.back()) {
+            tail.push_back(nums[i]);
+            continue;
+        }
+        auto left = 0;
+        auto right = tail.size() - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (tail[mid] < nums[i]) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        tail[left] = nums[i];
+    }
+    return tail.size();
 }
+#pragma endregion
 ```
 
 ### [word-break](https://leetcode-cn.com/problems/word-break/)
