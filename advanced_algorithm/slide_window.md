@@ -48,62 +48,56 @@ void slidingWindow(string s, string t) {
 
 > 给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字母的最小子串
 
-```go
-func minWindow(s string, t string) string {
-	// 保存滑动窗口字符集
-	win := make(map[byte]int)
-	// 保存需要的字符集
-	need := make(map[byte]int)
-	for i := 0; i < len(t); i++ {
-		need[t[i]]++
-	}
-	// 窗口
-	left := 0
-	right := 0
-	// match匹配次数
-	match := 0
-	start := 0
-	end := 0
-	min := math.MaxInt64
-	var c byte
-	for right < len(s) {
-		c = s[right]
-		right++
-		// 在需要的字符集里面，添加到窗口字符集里面
-		if need[c] != 0 {
-			win[c]++
-			// 如果当前字符的数量匹配需要的字符的数量，则match值+1
-			if win[c] == need[c] {
-				match++
-			}
-		}
+```c++
+// 根据 need 中每个字符所需的出现的次数，检查 win 是否满足条件
+bool checkWindow(unordered_map<char, int> &win, unordered_map<char, int> &need) {
+    for (const auto &item : need) {
+        if (win[item.first] < item.second) {
+            return false;
+        }
+    }
+    return true;
+}
 
-		// 当所有字符数量都匹配之后，开始缩紧窗口
-		for match == len(need) {
-			// 获取结果
-			if right-left < min {
-				min = right - left
-				start = left
-				end = right
-			}
-			c = s[left]
-			left++
-			// 左指针指向不在需要字符集则直接跳过
-			if need[c] != 0 {
-				// 左指针指向字符数量和需要的字符相等时，右移之后match值就不匹配则减一
-				// 因为win里面的字符数可能比较多，如有10个A，但需要的字符数量可能为3
-				// 所以在压死骆驼的最后一根稻草时，match才减一，这时候才跳出循环
-				if win[c] == need[c] {
-					match--
-				}
-				win[c]--
-			}
-		}
-	}
-	if min == math.MaxInt64 {
-		return ""
-	}
-	return s[start:end]
+// 给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字符的最小子串。
+string minWindow(string s, string t) {
+    unordered_map<char, int> win, need;
+    // 初始判断条件
+    // 注意：这里 T 中可能出现重复的字符，所以我们要记录字符的个数。
+
+    for (const auto &c : t) {
+        ++need[c];
+    }
+
+    auto left = 0;
+    auto right = -1;
+    auto minLen = numeric_limits<int>::max();
+    auto minBegin = -1;
+    // 注意：一定要进行类型转换，否则该判断会有问题
+    // 隐式类型转换，int转成size_type，后者为unsigned！
+    // -1一转，直接溢出
+    while (right < (int)s.size()) {
+        // right右移
+        // 如果当前字符在字符串 T 中，增加计数
+        if (need.find(s[++right]) != need.end()) {
+            ++win[s[right]];
+        }
+
+        // 如果当前win满足条件，left尽可能左移
+        while (checkWindow(win, need)) {
+            // 更新最短长度及其起始位置
+            if (right - left + 1 < minLen) {
+                minLen = right - left + 1;
+                minBegin = left;
+            }
+            // 如果当前字符在 T 中，更新win计数
+            if (need.find(s[left]) != need.end()) {
+                --win[s[left]];
+            }
+            ++left;
+        }
+    }
+    return minBegin == -1 ? "" : s.substr(minBegin, minLen);
 }
 ```
 
@@ -111,87 +105,80 @@ func minWindow(s string, t string) string {
 
 > 给定两个字符串  **s1**  和  **s2**，写一个函数来判断  **s2**  是否包含  **s1 **的排列。
 
-```go
-func checkInclusion(s1 string, s2 string) bool {
-	win := make(map[byte]int)
-	need := make(map[byte]int)
-	for i := 0; i < len(s1); i++ {
-		need[s1[i]]++
-	}
-	left := 0
-	right := 0
-	match := 0
-	for right < len(s2) {
-		c := s2[right]
-		right++
-		if need[c] != 0 {
-			win[c]++
-			if win[c] == need[c] {
-				match++
-			}
-		}
-		// 当窗口长度大于字符串长度，缩紧窗口
-		for right-left >= len(s1) {
-			// 当窗口长度和字符串匹配，并且里面每个字符数量也匹配时，满足条件
-			if match == len(need) {
-				return true
-			}
-			d := s2[left]
-			left++
-			if need[d] != 0 {
-				if win[d] == need[d] {
-					match--
-				}
-				win[d]--
-			}
-		}
-	}
-	return false
+```c++
+bool checkInclusion(string s1, string s2) {
+    unordered_map<char, int> win, need;
+    for (const auto &c : s1) {
+        ++need[c];
+    }
+    auto left = 0;
+    auto right = 0;
+    auto matchNum = 0;
+    while (right < s2.size()) {
+        auto charToPush = s2[right++];
+        if (need.find(charToPush) != need.end()) {
+            ++win[charToPush];
+            if (win[charToPush] == need[charToPush]) {
+                ++matchNum;
+            }
+        }
+        while (right - left >= s1.size()) {
+            if (matchNum == need.size()) {
+                return true;
+            }
+            auto charToPop = s2[left++];
+            if (need.find(charToPop) != need.end()) {
+                if (win[charToPop] == need[charToPop]) {
+                    --matchNum;
+                }
+                --win[charToPop];
+            }
+        }
+    }
+    return false;
 }
-
 ```
 
 [find-all-anagrams-in-a-string](https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/)
 
 > 给定一个字符串  **s **和一个非空字符串  **p**，找到  **s **中所有是  **p **的字母异位词的子串，返回这些子串的起始索引。
 
-```go
-func findAnagrams(s string, p string) []int {
-    win := make(map[byte]int)
-	need := make(map[byte]int)
-	for i := 0; i < len(p); i++ {
-		need[p[i]]++
-	}
-	left := 0
-	right := 0
-	match := 0
-    ans:=make([]int,0)
-	for right < len(s) {
-		c := s[right]
-		right++
-		if need[c] != 0 {
-			win[c]++
-			if win[c] == need[c] {
-				match++
-			}
-		}
-		// 当窗口长度大于字符串长度，缩紧窗口
-		for right-left >= len(p) {
-			// 当窗口长度和字符串匹配，并且里面每个字符数量也匹配时，满足条件
-			if right-left == len(p)&& match == len(need) {
-				ans=append(ans,left)
-			}
-			d := s[left]
-			left++
-			if need[d] != 0 {
-				if win[d] == need[d] {
-					match--
-				}
-				win[d]--
-			}
-		}
-	}
-	return ans
+```c++
+vector<int> findAnagrams(string s, string p) {
+    unordered_map<char, int> win, need;
+    for (const auto &c : p) {
+        ++need[c];
+    }
+
+    vector<int> ret;
+    auto left = 0;
+    auto right = 0;
+    auto matchNum = 0;
+    while (right < s.size()) {
+        auto charToPush = s[right++];
+        if (need.find(charToPush) != need.end()) {
+            ++win[charToPush];
+            if (need[charToPush] == win[charToPush]) {
+                ++matchNum;
+            }
+        }
+
+        while (right - left >= p.size()) {
+            if (matchNum == need.size() && right - left == p.size()) {
+                ret.push_back(left);
+            }
+            auto charToPop = s[left++];
+            if (need.find(charToPop) == need.end()) {
+                continue;
+            }
+
+            if (win[charToPop] == need[charToPop]) {
+                --matchNum;
+            }
+            --win[charToPop];
+        }
+    }
+    return ret;
 }
 ```
 
@@ -204,36 +191,30 @@ func findAnagrams(s string, p string) []int {
 > 输出: 3
 > 解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
 
-```go
-func lengthOfLongestSubstring(s string) int {
-    // 滑动窗口核心点：1、右指针右移 2、根据题意收缩窗口 3、左指针右移更新窗口 4、根据题意计算结果
-    if len(s)==0{
-        return 0
-    }
-    win:=make(map[byte]int)
-    left:=0
-    right:=0
-    ans:=1
-    for right<len(s){
-        c:=s[right]
-        right++
-        win[c]++
-        // 缩小窗口
-        for win[c]>1{
-            d:=s[left]
-            left++
-            win[d]--
+```c++
+int lengthOfLongestSubstring(string s) {
+    unordered_set<char> win;
+    auto left = 0;
+    auto right = 0;
+    auto maxLen = 0;
+    while (right < s.size()) {
+        auto charToPush = s[right++];
+        if (win.find(charToPush) == win.end()) {
+            win.insert(charToPush);
+            maxLen = max(maxLen, right - left);
+            continue;
         }
-        // 计算结果
-        ans=max(right-left,ans)
+        while (right >= left) {
+            auto charToPop = s[left++];
+            // 左指针右移
+            // 剔除重复字符之前的字符
+            if (charToPush == charToPop) {
+                break;
+            }
+            win.erase(charToPop);
+        }
     }
-    return ans
-}
-func max(a,b int)int{
-    if a>b{
-        return a
-    }
-    return b
+    return maxLen;
 }
 ```
 
