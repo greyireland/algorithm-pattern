@@ -10,20 +10,17 @@
 
 > 编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组  `char[]`  的形式给出。
 
-```go
-func reverseString(s []byte) {
-	res := make([]byte, 0)
-	reverse(s, 0, &res)
-	for i := 0; i < len(s); i++ {
-		s[i] = res[i]
-	}
+```c++
+void reverseString(vector<char> &s) {
+    reverse(s, 0, s.size() - 1);
 }
-func reverse(s []byte, i int, res *[]byte) {
-	if i == len(s) {
-		return
-	}
-	reverse(s, i+1, res)
-	*res = append(*res, s[i])
+
+void reverse(vector<char> &s, int left, int right) {
+    if (left >= right) {
+        return;
+    }
+    swap(s[left++], s[right--]);
+    reverse(s, left, right);
 }
 ```
 
@@ -32,23 +29,20 @@ func reverse(s []byte, i int, res *[]byte) {
 > 给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
 > **你不能只是单纯的改变节点内部的值**，而是需要实际的进行节点交换。
 
-```go
-func swapPairs(head *ListNode) *ListNode {
-    // 思路：将链表翻转转化为一个子问题，然后通过递归方式依次解决
-    // 先翻转两个，然后将后面的节点继续这样翻转，然后将这些翻转后的节点连接起来
-    return helper(head)
+```c++
+ListNode* swapPairs(ListNode* head) {
+    return swapper(head);
 }
-func helper(head *ListNode)*ListNode{
-    if head==nil||head.Next==nil{
-        return head
+
+ListNode* swapper(ListNode *head) {
+    if (head == nullptr || head->next == nullptr) {
+        return head;
     }
-    // 保存下一阶段的头指针
-    nextHead:=head.Next.Next
-    // 翻转当前阶段指针
-    next:=head.Next
-    next.Next=head
-    head.Next=helper(nextHead)
-    return next
+    auto nextHead = head->next->next;
+    auto newHead = head->next;
+    newHead->next = head;
+    head->next = swapper(nextHead);
+    return newHead;
 }
 ```
 
@@ -56,34 +50,35 @@ func helper(head *ListNode)*ListNode{
 
 > 给定一个整数 n，生成所有由 1 ... n 为节点所组成的二叉搜索树。
 
-```go
-func generateTrees(n int) []*TreeNode {
-    if n==0{
-        return nil
+```c++
+vector<TreeNode *> generateTrees(int n) {
+    if (n == 0) {
+        return {};
     }
-    return generate(1,n)
-
+    return generate(1, n);
 }
-func generate(start,end int)[]*TreeNode{
-    if start>end{
-        return []*TreeNode{nil}
+
+vector<TreeNode *> generate(int start, int end) {
+    if (start > end) {
+        // 记得返回nullptr，不可返回空vector
+        return {nullptr};
     }
-    ans:=make([]*TreeNode,0)
-    for i:=start;i<=end;i++{
-        // 递归生成所有左右子树
-        lefts:=generate(start,i-1)
-        rights:=generate(i+1,end)
-        // 拼接左右子树后返回
-        for j:=0;j<len(lefts);j++{
-            for k:=0;k<len(rights);k++{
-                root:=&TreeNode{Val:i}
-                root.Left=lefts[j]
-                root.Right=rights[k]
-                ans=append(ans,root)
+    vector<TreeNode *> ans;
+    for (int i = start; i <= end; ++i) {
+        // 取i作为根节点，生成所有左右子树
+        auto lefts = generate(start, i - 1);
+        auto rights = generate(i + 1, end);
+        // 拼接
+        for (auto &left : lefts) {
+            for (auto &right : rights) {
+                auto root = new TreeNode(i);
+                root->left = left;
+                root->right = right;
+                ans.push_back(root);
             }
         }
     }
-    return ans
+    return ans;
 }
 ```
 
@@ -96,23 +91,23 @@ func generate(start,end int)[]*TreeNode{
 > F(N) = F(N - 1) + F(N - 2), 其中 N > 1.
 > 给定  N，计算  F(N)。
 
-```go
-func fib(N int) int {
-    return dfs(N)
+```c++
+unordered_map<int, int> memo;
+
+int fib(int N) {
+    return fibWithMemo(N);
 }
-var m map[int]int=make(map[int]int)
-func dfs(n int)int{
-    if n < 2{
-        return n
+
+int fibWithMemo(int N) {
+    if (N < 2) {
+        return N;
     }
-    // 读取缓存
-    if m[n]!=0{
-        return m[n]
+    if (memo[N] != 0) {
+        return memo[N];
     }
-    ans:=dfs(n-2)+dfs(n-1)
-    // 缓存已经计算过的值
-    m[n]=ans
-    return ans
+    auto ret = fibWithMemo(N - 1) + fib(N - 2);
+    memo[N] = ret;
+    return ret;
 }
 ```
 
