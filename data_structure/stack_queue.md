@@ -100,7 +100,7 @@ func evalRPN(tokens []string) int {
             if len(stack)<2{
                 return -1
             }
-            // 注意：a为除数，b为被除数
+            // 注意：a为被除数，b为除数
             b:=stack[len(stack)-1]
             a:=stack[len(stack)-2]
             stack=stack[:len(stack)-2]
