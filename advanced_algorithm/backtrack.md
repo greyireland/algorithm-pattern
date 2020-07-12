@@ -6,11 +6,11 @@
 
 ## 模板
 
-```go
-result = []
-func backtrack(选择列表,路径):
+```c++
+vector<T> result;
+void backtrack(选择列表,路径):
     if 满足结束条件:
-        result.add(路径)
+        result.push_back(路径);
         return
     for 选择 in 选择列表:
         做选择
@@ -30,31 +30,26 @@ func backtrack(选择列表,路径):
 
 ![image.png](https://img.fuiboom.com/img/backtrack.png)
 
-```go
-func subsets(nums []int) [][]int {
-	// 保存最终结果
-	result := make([][]int, 0)
-	// 保存中间结果
-	list := make([]int, 0)
-	backtrack(nums, 0, list, &result)
-	return result
+```c++
+vector<vector<int>> subsets(vector<int>& nums) {
+    vector<vector<int>> result;
+    vector<int> track;
+    backtrack(nums, 0, track, result);
+    return result;
 }
 
-// nums 给定的集合
-// pos 下次添加到集合中的元素位置索引
-// list 临时结果集合(每次需要复制保存)
-// result 最终结果
-func backtrack(nums []int, pos int, list []int, result *[][]int) {
-	// 把临时结果复制出来保存到最终结果
-	ans := make([]int, len(list))
-	copy(ans, list)
-	*result = append(*result, ans)
-	// 选择、处理结果、再撤销选择
-	for i := pos; i < len(nums); i++ {
-		list = append(list, nums[i])
-		backtrack(nums, i+1, list, result)
-		list = list[0 : len(list)-1]
-	}
+void backtrack(const vector<int> &nums, int pos, vector<int> &track, vector<vector<int>> &result) {
+    // 插入当前组合
+    result.push_back(track);
+    for (int i = pos; i < nums.size(); ++i) {
+        // 每个值，都有两种可能，包含和不包含
+        // 先压入
+        track.push_back(nums[i]);
+        // 递归处理包含当前值的情况
+        backtrack(nums, i + 1, track, result);
+        // 弹出，向后遍历，处理不包含的情况
+        track.pop_back();
+    }
 }
 ```
 
@@ -62,41 +57,26 @@ func backtrack(nums []int, pos int, list []int, result *[][]int) {
 
 > 给定一个可能包含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。说明：解集不能包含重复的子集。
 
-```go
-import (
-	"sort"
-)
-
-func subsetsWithDup(nums []int) [][]int {
-	// 保存最终结果
-	result := make([][]int, 0)
-	// 保存中间结果
-	list := make([]int, 0)
-	// 先排序
-	sort.Ints(nums)
-	backtrack(nums, 0, list, &result)
-	return result
+```c++
+// 对数据进行排序来判断重复元素
+vector<vector<int>> subsetsWithDup(vector<int> &nums) {
+    vector<vector<int>> result;
+    vector<int> track;
+    sort(nums.begin(), nums.end());
+    backtrack(nums, 0, track, result);
+    return result;
 }
 
-// nums 给定的集合
-// pos 下次添加到集合中的元素位置索引
-// list 临时结果集合(每次需要复制保存)
-// result 最终结果
-func backtrack(nums []int, pos int, list []int, result *[][]int) {
-	// 把临时结果复制出来保存到最终结果
-	ans := make([]int, len(list))
-	copy(ans, list)
-	*result = append(*result, ans)
-	// 选择时需要剪枝、处理、撤销选择
-	for i := pos; i < len(nums); i++ {
-        // 排序之后，如果再遇到重复元素，则不选择此元素
-		if i != pos && nums[i] == nums[i-1] {
-			continue
-		}
-		list = append(list, nums[i])
-		backtrack(nums, i+1, list, result)
-		list = list[0 : len(list)-1]
-	}
+void backtrack(const vector<int> &nums, int pos, vector<int> &track, vector<vector<int>> &result) {
+    result.push_back(track);
+    for (int i = pos; i < nums.size(); ++i) {
+        if (i != pos && nums[i] == nums[i - 1]) {
+            continue;
+        }
+        track.push_back(nums[i]);
+        backtrack(nums, i + 1, track, result);
+        track.pop_back();
+    }
 }
 ```
 
@@ -106,40 +86,51 @@ func backtrack(nums []int, pos int, list []int, result *[][]int) {
 
 思路：需要记录已经选择过的元素，满足条件的结果才进行返回
 
-```go
-func permute(nums []int) [][]int {
-    result := make([][]int, 0)
-    list := make([]int, 0)
-    // 标记这个元素是否已经添加到结果集
-    visited := make([]bool, len(nums))
-    backtrack(nums, visited, list, &result)
-    return result
+```c++
+/*
+ * 这个问题可以看作有 n 个排列成一行的空格，从左往右依此填入题目给定的 n 个数，每个数只能使用一次
+ *
+ * 回溯法
+ * 不同于上面的子集问题，撤销选择时弹出了事，这里撤销后还要留待后续组合使用
+ * 并且需要检查数字是否已经填入过
+ *
+ * 思路：
+ * backtrack(fillingPos, result)，fillingPos为当前填入的位置
+ * 若fillingPos == n，则已经完成排列
+ * 否则，填入"未填入过"的数字，递归处理下一个位置，最后撤销当前选择，尝试以其他"未填入过"的数字来填入fillingPos
+ *
+ * 优化：
+ * 不使用额外的数组来维护已经填入过的数字，降低空间复杂度
+ * 对于nums、当前位置fillingPos
+ * [0, fillingPos - 1]——已填入过的数字
+ * [fillingPos, n - 1]——未填入过的数字
+ * 每次选择时把nums[i]与nums[fillingPos]进行交换
+ * 撤销选择时把nums[i]与nums[fillingPos]再交换一次即可
+ *
+ * 既然 [fillingPos, n - 1] 为未填入的数字
+ * 偷个鸡，撤销选择时不交换，直接 ++i 可否？
+ * 并不能
+ * 因为原本的 nums[i] 填入 fillingPos 这一可能性已经处理过了
+ * 如果不交换回来，for循环遍历的时候会再用到同一个数字！
+ */
+vector<vector<int>> permute(vector<int> &nums) {
+    vector<vector<int>> result;
+    backtrack(result, nums, 0, nums.size());
+    return result;
 }
 
-// nums 输入集合
-// visited 当前递归标记过的元素
-// list 临时结果集(路径)
-// result 最终结果
-func backtrack(nums []int, visited []bool, list []int, result *[][]int) {
-    // 返回条件：临时结果和输入集合长度一致 才是全排列
-    if len(list) == len(nums) {
-        ans := make([]int, len(list))
-        copy(ans, list)
-        *result = append(*result, ans)
-        return
+void backtrack(vector<vector<int>> &result, vector<int> &nums, int fillingPos, int len) {
+    if (fillingPos == len) {
+        // n个数字都已排列完，保存并退出
+        result.emplace_back(nums);
+        return;
     }
-    for i := 0; i < len(nums); i++ {
-        // 已经添加过的元素，直接跳过
-        if visited[i] {
-            continue
-        }
-        // 添加元素
-        list = append(list, nums[i])
-        visited[i] = true
-        backtrack(nums, visited, list, result)
-        // 移除元素
-        visited[i] = false
-        list = list[0 : len(list)-1]
+    for (int i = fillingPos; i < len; ++i) {
+        // 把nums[i]填入到当前位置
+        swap(nums[i], nums[fillingPos]);
+        backtrack(result, nums, fillingPos + 1, len);
+        // 把顺序恢复回去
+        swap(nums[i], nums[fillingPos]);
     }
 }
 ```
@@ -148,47 +139,41 @@ func backtrack(nums []int, visited []bool, list []int, result *[][]int) {
 
 > 给定一个可包含重复数字的序列，返回所有不重复的全排列。
 
-```go
-import (
-	"sort"
-)
-
-func permuteUnique(nums []int) [][]int {
-	result := make([][]int, 0)
-	list := make([]int, 0)
-	// 标记这个元素是否已经添加到结果集
-	visited := make([]bool, len(nums))
-	sort.Ints(nums)
-	backtrack(nums, visited, list, &result)
-	return result
+```c++
+vector<vector<int>> permuteUnique(vector<int> &nums) {
+    vector<vector<int>> result;
+    vector<int> current;
+    vector<bool> visited(nums.size());
+    sort(nums.begin(), nums.end());
+    backtrack(nums, nums.size(), visited, current, result);
+    return result;
 }
 
-// nums 输入集合
-// visited 当前递归标记过的元素
-// list 临时结果集
-// result 最终结果
-func backtrack(nums []int, visited []bool, list []int, result *[][]int) {
-	// 临时结果和输入集合长度一致 才是全排列
-	if len(list) == len(nums) {
-		subResult := make([]int, len(list))
-		copy(subResult, list)
-		*result = append(*result, subResult)
-	}
-	for i := 0; i < len(nums); i++ {
-		// 已经添加过的元素，直接跳过
-		if visited[i] {
-			continue
-		}
-        // 上一个元素和当前相同，并且没有访问过就跳过
-		if i != 0 && nums[i] == nums[i-1] && !visited[i-1] {
-			continue
-		}
-		list = append(list, nums[i])
-		visited[i] = true
-		backtrack(nums, visited, list, result)
-		visited[i] = false
-		list = list[0 : len(list)-1]
-	}
+void backtrack(vector<int> &nums, int len, vector<bool> &visited,
+               vector<int> &current, vector<vector<int>> &result) {
+    if (current.size() == nums.size()) {
+        result.emplace_back(current);
+        return;
+    }
+    for (int i = 0; i < nums.size(); ++i) {
+        // 已经在组合中
+        if (visited[i]) {
+            continue;
+        }
+        // 与上一个元素相同，并且没有访问过就跳过
+        // 没访问过？
+        // 重复元素，只有第一个元素考虑排列组合，后面的不再考虑以免重复
+        // 一旦第一个重复的元素被pop并设置visited为false，则其所有排列组合都已考虑完毕
+        // 跳过后续的重复元素
+        if (i > 0 && nums[i] == nums[i - 1] && !visited[i - 1]) {
+            continue;
+        }
+        current.emplace_back(nums[i]);
+        visited[i] = true;
+        backtrack(nums, len, visited, current, result);
+        visited[i] = false;
+        current.pop_back();
+    }
 }
 ```
 
