@@ -394,32 +394,29 @@ int maxDepth(TreeNode *root) {
 思路：分治法，分为三种情况：左子树最大路径和最大，右子树最大路径和最大，左右子树最大加根节点最大，需要保存两个变量：一个保存子树最大路径和，一个保存左右加根节点和，然后比较这个两个变量选择最大值即可
 
 ```c++
-class Solution {
-public:
-    int maxPathSum(TreeNode *root) {
-        auto maxSum = std::numeric_limits<int>::min();
-        calcMaxPath(root, maxSum);
-        return maxSum;
-    }
+int maxPathSum(TreeNode *root) {
+    auto maxSum = std::numeric_limits<int>::min();
+    calcMaxPath(root, maxSum);
+    return maxSum;
+}
 
-    int calcMaxPath(TreeNode *&root, int &maxSum) {
-        if (!root) {
-            return 0;
-        }
-        // 如果左右子树为负，直接丢弃该部分（不需要从一个叶子节点走到另一个叶子）设置为0
-        auto left = max(calcMaxPath(root->left), 0);
-        auto right = max(calcMaxPath(root->right), 0);
-
-        // 取当前值与当前"闭环"（左右子树+当前节点）的最大值
-        // 注意，初始值要设置为最小数！
-        // 子树可以不舍弃负数，但是结果不能（必须至少经过一个节点）
-        // 当前节点为叶子时，right + left + root->val = 0 + 0 + root->val
-        maxSum = max(maxSum, left + right + root->val);
-        // 已经处理过同时涉及左右子树+当前节点的可能
-        // 对于后续处理，只有一种可能，以当前节点为根的这颗树，取一条路径返回——左右子树最大值 + 当前节点
-        return max(left, right) + root->val;
+int calcMaxPath(TreeNode *&root, int &maxSum) {
+    if (!root) {
+        return 0;
     }
-};
+    // 如果左右子树为负，直接丢弃该部分（不需要从一个叶子节点走到另一个叶子）设置为0
+    auto left = max(calcMaxPath(root->left), 0);
+    auto right = max(calcMaxPath(root->right), 0);
+
+    // 取当前值与当前"闭环"（左右子树+当前节点）的最大值
+    // 注意，初始值要设置为最小数！
+    // 子树可以不舍弃负数，但是结果不能（必须至少经过一个节点）
+    // 当前节点为叶子时，right + left + root->val = 0 + 0 + root->val
+    maxSum = max(maxSum, left + right + root->val);
+    // 已经处理过同时涉及左右子树+当前节点的可能
+    // 对于后续处理，只有一种可能，以当前节点为根的这颗树，取一条路径返回——左右子树最大值 + 当前节点
+    return max(left, right) + root->val;
+}
 ```
 
 #### lowest-common-ancestor-of-a-binary-tree
@@ -431,27 +428,24 @@ public:
 思路：分治法，有左子树的公共祖先或者有右子树的公共祖先，就返回子树的祖先，否则返回根节点
 
 ```c++
-class Solution {
-public:
-   TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        if (!root) {
-            return nullptr;
-        }
-        // 相等 直接返回root节点即可
-        if (root == p || root == q) {
-            return root;
-        }
-        // Divide
-        auto left = lowestCommonAncestor(root->left, p, q);
-        auto right = lowestCommonAncestor(root->right, p, q);
-        // Conquer
-        // 左右两边都不为空，则根节点为祖先
-        if (left && right) {
-            return root;
-        }
-        return left ? left : right;
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+    if (!root) {
+        return nullptr;
     }
-};
+    // 相等 直接返回root节点即可
+    if (root == p || root == q) {
+        return root;
+    }
+    // Divide
+    auto left = lowestCommonAncestor(root->left, p, q);
+    auto right = lowestCommonAncestor(root->right, p, q);
+    // Conquer
+    // 左右两边都不为空，则根节点为祖先
+    if (left && right) {
+        return root;
+    }
+    return left ? left : right;
+}
 ```
 
 ### BFS 层次应用
@@ -465,33 +459,30 @@ public:
 思路：用一个队列记录一层的元素，然后扫描这一层元素添加下一层元素到队列（一个数进去出来一次，所以复杂度 O(logN)）
 
 ```c++
-class Solution {
-public:
-    vector<vector<int>> levelOrder(TreeNode* root) {
-        vector<vector<int>> ret;
-        if (!root) {
-            return ret;
-        }
-        queue<TreeNode*> queue;
-        queue.push(root);
-        while (!queue.empty()) {
-            vector<int> levelValues;
-            for (auto levelNodeNum = queue.size(); levelNodeNum > 0; --levelNodeNum) {
-                auto node = queue.front();
-                queue.pop();
-                levelValues.push_back(node->val);
-                if (node->left) {
-                    queue.push(node->left);
-                }
-                if (node->right) {
-                    queue.push(node->right);
-                }
-            }
-            ret.push_back(levelValues);
-        }
+vector<vector<int>> levelOrder(TreeNode* root) {
+    vector<vector<int>> ret;
+    if (!root) {
         return ret;
     }
-};
+    queue<TreeNode*> queue;
+    queue.push(root);
+    while (!queue.empty()) {
+        vector<int> levelValues;
+        for (auto levelNodeNum = queue.size(); levelNodeNum > 0; --levelNodeNum) {
+            auto node = queue.front();
+            queue.pop();
+            levelValues.push_back(node->val);
+            if (node->left) {
+                queue.push(node->left);
+            }
+            if (node->right) {
+                queue.push(node->right);
+            }
+        }
+        ret.push_back(levelValues);
+    }
+    return ret;
+}
 ```
 
 #### binary-tree-level-order-traversal-ii
@@ -503,45 +494,42 @@ public:
 思路：在层级遍历的基础上，翻转一下结果即可
 
 ```c++
-class Solution {
-public:
-    vector<vector<int>> levelOrderBottom(TreeNode *root) {
-        auto result = levelOrder(root);
-        reverse(result);
-        return result;
-    }
+vector<vector<int>> levelOrderBottom(TreeNode *root) {
+    auto result = levelOrder(root);
+    reverse(result);
+    return result;
+}
 
-    vector<vector<int>> levelOrder(TreeNode *root) {
-        vector<vector<int>> ret;
-        if (!root) {
-            return ret;
-        }
-        queue<TreeNode *> queue;
-        queue.push(root);
-        while (!queue.empty()) {
-            vector<int> levelValues;
-            for (auto levelNodeNum = queue.size(); levelNodeNum > 0; --levelNodeNum) {
-                auto node = queue.front();
-                queue.pop();
-                levelValues.push_back(node->val);
-                if (node->left) {
-                    queue.push(node->left);
-                }
-                if (node->right) {
-                    queue.push(node->right);
-                }
-            }
-            ret.push_back(levelValues);
-        }
+vector<vector<int>> levelOrder(TreeNode *root) {
+    vector<vector<int>> ret;
+    if (!root) {
         return ret;
     }
-
-    void reverse(vector<vector<int>> &result) {
-        for (int i = 0, j = result.size() - 1; i < j; ++i, --j) {
-            swap(result[i], result[j]);
+    queue<TreeNode *> queue;
+    queue.push(root);
+    while (!queue.empty()) {
+        vector<int> levelValues;
+        for (auto levelNodeNum = queue.size(); levelNodeNum > 0; --levelNodeNum) {
+            auto node = queue.front();
+            queue.pop();
+            levelValues.push_back(node->val);
+            if (node->left) {
+                queue.push(node->left);
+            }
+            if (node->right) {
+                queue.push(node->right);
+            }
         }
+        ret.push_back(levelValues);
     }
-};
+    return ret;
+}
+
+void reverse(vector<vector<int>> &result) {
+    for (int i = 0, j = result.size() - 1; i < j; ++i, --j) {
+        swap(result[i], result[j]);
+    }
+}
 ```
 
 #### binary-tree-zigzag-level-order-traversal
@@ -551,42 +539,39 @@ public:
 > 给定一个二叉树，返回其节点值的锯齿形层次遍历。Z 字形遍历
 
 ```c++
-class Solution {
-public:
-    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
-        vector<vector<int>> ret;
-        if (!root) {
-            return ret;
-        }
-        queue<TreeNode *> queue;
-        queue.push(root);
-        auto l2r = true;
-        while (!queue.empty()) {
-            vector<int> levelValues;
-            for (auto levelNodeNum = queue.size(); levelNodeNum > 0; --levelNodeNum) {
-                auto node = queue.front();
-                queue.pop();
-                levelValues.push_back(node->val);
-                if (node->left) {
-                    queue.push(node->left);
-                }
-                if (node->right) {
-                    queue.push(node->right);
-                }
-            }
-            if (l2r) {
-                ret.emplace_back(levelValues);
-            } else {
-                ret.emplace_back(
-                        levelValues.rbegin(),
-                        levelValues.rend()
-                );
-            }
-            l2r = !l2r;
-        }
+vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+    vector<vector<int>> ret;
+    if (!root) {
         return ret;
     }
-};
+    queue<TreeNode *> queue;
+    queue.push(root);
+    auto l2r = true;
+    while (!queue.empty()) {
+        vector<int> levelValues;
+        for (auto levelNodeNum = queue.size(); levelNodeNum > 0; --levelNodeNum) {
+            auto node = queue.front();
+            queue.pop();
+            levelValues.push_back(node->val);
+            if (node->left) {
+                queue.push(node->left);
+            }
+            if (node->right) {
+                queue.push(node->right);
+            }
+        }
+        if (l2r) {
+            ret.emplace_back(levelValues);
+        } else {
+            ret.emplace_back(
+                    levelValues.rbegin(),
+                    levelValues.rend()
+            );
+        }
+        l2r = !l2r;
+    }
+    return ret;
+}
 ```
 
 ### 二叉搜索树应用
@@ -603,77 +588,71 @@ public:
 
 ```c++
 // v1
-class Solution {
-public:
-    bool isValidBST(TreeNode *root) {
-        if (!root) {
-            return true;
-        }
-        // 思路 1：中序遍历，检查结果列表是否已经有序
-        auto inOrderValues = vector<int>();
-        inOrder(root, inOrderValues);
-        for (auto iter = inOrderValues.cbegin() + 1; iter != inOrderValues.cend(); ++iter) {
-            if (*(iter - 1) >= *iter) {
-                return false;
-            }
-        }
+bool isValidBST(TreeNode *root) {
+    if (!root) {
         return true;
     }
-
-    void inOrder(TreeNode *root, vector<int> &values) {
-        if (!root) {
-            return;
+    // 思路 1：中序遍历，检查结果列表是否已经有序
+    auto inOrderValues = vector<int>();
+    inOrder(root, inOrderValues);
+    for (auto iter = inOrderValues.cbegin() + 1; iter != inOrderValues.cend(); ++iter) {
+        if (*(iter - 1) >= *iter) {
+            return false;
         }
-        inOrder(root->left, values);
-        values.push_back(root->val);
-        inOrder(root->right, values);
     }
-};
+    return true;
+}
+
+void inOrder(TreeNode *root, vector<int> &values) {
+    if (!root) {
+        return;
+    }
+    inOrder(root->left, values);
+    values.push_back(root->val);
+    inOrder(root->right, values);
+}
 ```
 
 ```c++
 // v2分治法
-class Solution {
-public:
-    struct Result {
-        TreeNode *maxNode;
-        TreeNode *minNode;
-        bool isValidate;
+struct Result {
+    TreeNode *maxNode;
+    TreeNode *minNode;
+    bool isValidate;
 
-        Result(bool validate = true, TreeNode *max = nullptr, TreeNode *min = nullptr)
-                : isValidate(validate), maxNode(max), minNode(min) {
+    Result(bool validate = true, TreeNode *max = nullptr, TreeNode *min = nullptr)
+            : isValidate(validate), maxNode(max), minNode(min) {
 
-        }
-    };
-    bool isValidBST(TreeNode *root) {
-        if (!root) {
-            return true;
-        }
-        return helper(root).isValidate;
-    }
-
-    Result helper(TreeNode *root) {
-        if (!root) {
-            return {};
-        }
-        auto left = helper(root->left);
-        auto right = helper(root->right);
-        if (!(left.isValidate && right.isValidate)) {
-            return {false};
-        }
-        if (left.maxNode && left.maxNode->val >= root->val) {
-            return {false};
-        }
-        if (right.minNode && right.minNode->val <= root->val) {
-            return {false};
-        }
-        return {
-                true,
-                right.maxNode ? right.maxNode : root,
-                left.minNode ? left.minNode : root,
-        };
     }
 };
+bool isValidBST(TreeNode *root) {
+    if (!root) {
+        return true;
+    }
+    return helper(root).isValidate;
+}
+
+Result helper(TreeNode *root) {
+    if (!root) {
+        return {};
+    }
+    auto left = helper(root->left);
+    auto right = helper(root->right);
+    if (!(left.isValidate && right.isValidate)) {
+        return {false};
+    }
+    if (left.maxNode && left.maxNode->val >= root->val) {
+        return {false};
+    }
+    if (right.minNode && right.minNode->val <= root->val) {
+        return {false};
+    }
+    return {
+            true,
+            right.maxNode ? right.maxNode : root,
+            left.minNode ? left.minNode : root,
+    };
+}
 ```
 
 #### insert-into-a-binary-search-tree
@@ -685,23 +664,20 @@ public:
 思路：找到最后一个叶子节点满足插入条件即可
 
 ```c++
-class Solution {
-public:
-    // DFS查找插入位置
-    TreeNode* insertIntoBST(TreeNode* root, int val) {
-        if (!root) {
-            root = new TreeNode(val);
-            return root;
-        }
-    
-        if (root->val > val) {
-            root->left = insertIntoBST(root->left, val);
-        } else {
-            root->right = insertIntoBST(root->right, val);
-        }
+// DFS查找插入位置
+TreeNode* insertIntoBST(TreeNode* root, int val) {
+    if (!root) {
+        root = new TreeNode(val);
         return root;
     }
-};
+
+    if (root->val > val) {
+        root->left = insertIntoBST(root->left, val);
+    } else {
+        root->right = insertIntoBST(root->right, val);
+    }
+    return root;
+}
 ```
 
 ## 总结

@@ -12,47 +12,44 @@
 > 验证二叉搜索树
 
 ```c++
-class Solution {
-public:
-    struct Result {
-        TreeNode *maxNode;
-        TreeNode *minNode;
-        bool isValidate;
+struct Result {
+    TreeNode *maxNode;
+    TreeNode *minNode;
+    bool isValidate;
 
-        Result(bool validate = true, TreeNode *max = nullptr, TreeNode *min = nullptr)
-                : isValidate(validate), maxNode(max), minNode(min) {
+    Result(bool validate = true, TreeNode *max = nullptr, TreeNode *min = nullptr)
+            : isValidate(validate), maxNode(max), minNode(min) {
 
-        }
-    };
-    bool isValidBST(TreeNode *root) {
-        if (!root) {
-            return true;
-        }
-        return helper(root).isValidate;
-    }
-
-    Result helper(TreeNode *root) {
-        if (!root) {
-            return {};
-        }
-        auto left = helper(root->left);
-        auto right = helper(root->right);
-        if (!(left.isValidate && right.isValidate)) {
-            return {false};
-        }
-        if (left.maxNode && left.maxNode->val >= root->val) {
-            return {false};
-        }
-        if (right.minNode && right.minNode->val <= root->val) {
-            return {false};
-        }
-        return {
-                true,
-                right.maxNode ? right.maxNode : root,
-                left.minNode ? left.minNode : root,
-        };
     }
 };
+bool isValidBST(TreeNode *root) {
+    if (!root) {
+        return true;
+    }
+    return helper(root).isValidate;
+}
+
+Result helper(TreeNode *root) {
+    if (!root) {
+        return {};
+    }
+    auto left = helper(root->left);
+    auto right = helper(root->right);
+    if (!(left.isValidate && right.isValidate)) {
+        return {false};
+    }
+    if (left.maxNode && left.maxNode->val >= root->val) {
+        return {false};
+    }
+    if (right.minNode && right.minNode->val <= root->val) {
+        return {false};
+    }
+    return {
+            true,
+            right.maxNode ? right.maxNode : root,
+            left.minNode ? left.minNode : root,
+    };
+}
 ```
 
 [insert-into-a-binary-search-tree](https://leetcode-cn.com/problems/insert-into-a-binary-search-tree/)

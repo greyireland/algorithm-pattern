@@ -69,42 +69,39 @@ public:
 思路：通过栈保存原来的元素，遇到表达式弹出运算，再推入结果，重复这个过程
 
 ```c++
-class Solution {
-public:
-    int evalRPN(vector<string> &tokens) {
-       if (tokens.empty()) {
-            return 0;
-        }
-        auto token = tokens.back();
-        tokens.pop_back();
-        if (token != "+" && token != "-" && token != "*" && token != "/") {
-            return atoi(token);
-        }
-        auto rhs = evalRPN(tokens);
-        auto lhs = evalRPN(tokens);
-        if (token == "+") {
-            return lhs + rhs;
-        } else if (token == "-") {
-            return lhs - rhs;
-        } else if (token == "*") {
-            return lhs * rhs;
-        } else if (token == "/") {
-            return lhs / rhs;
-        }
-        return -1;
+int evalRPN(vector<string> &tokens) {
+   if (tokens.empty()) {
+        return 0;
     }
+    auto token = tokens.back();
+    tokens.pop_back();
+    if (token != "+" && token != "-" && token != "*" && token != "/") {
+        return atoi(token);
+    }
+    auto rhs = evalRPN(tokens);
+    auto lhs = evalRPN(tokens);
+    if (token == "+") {
+        return lhs + rhs;
+    } else if (token == "-") {
+        return lhs - rhs;
+    } else if (token == "*") {
+        return lhs * rhs;
+    } else if (token == "/") {
+        return lhs / rhs;
+    }
+    return -1;
+}
 
-    int atoi(const string &str) {
-        if (str[0] == '-') {
-            return -atoi(str.substr(1));
-        }
-        int ret = 0;
-        for (const auto &item : str) {
-            ret = ret * 10 + item - '0';
-        }
-        return ret;
+int atoi(const string &str) {
+    if (str[0] == '-') {
+        return -atoi(str.substr(1));
     }
-};
+    int ret = 0;
+    for (const auto &item : str) {
+        ret = ret * 10 + item - '0';
+    }
+    return ret;
+}
 ```
 
 [decode-string](https://leetcode-cn.com/problems/decode-string/)
@@ -117,60 +114,57 @@ public:
 思路：通过栈辅助进行操作
 
 ```c++
-class Solution {
-public:
 string decodeString(string s) {
-        if (s.empty()) {
-            return "";
-        }
+    if (s.empty()) {
+        return "";
+    }
 
-        vector<char> stack;
-        for (const auto &c : s) {
-            if (c != ']') {
-                stack.push_back(c);
-                continue;
-            }
-            vector<char> subStr;
-            while (stack.back() != '[') {
-                subStr.push_back(stack.back());
-                stack.pop_back();
-            }
+    vector<char> stack;
+    for (const auto &c : s) {
+        if (c != ']') {
+            stack.push_back(c);
+            continue;
+        }
+        vector<char> subStr;
+        while (stack.back() != '[') {
+            subStr.push_back(stack.back());
             stack.pop_back();
+        }
+        stack.pop_back();
 
-            int digitBegin = stack.size() - 1;
-            for (; digitBegin != 0; --digitBegin) {
-                auto val = stack[digitBegin];
-                if (!('0' <= val && val <= '9')) {
-                    ++digitBegin;
-                    break;
-                }
-            }
-            auto repeat = atoi({
-                                    stack.begin() + digitBegin,
-                                    stack.end(),
-                            });
-            stack.resize(digitBegin);
-            for (int i = 0; i < repeat; ++i) {
-                stack.insert(stack.end(), subStr.rbegin(), subStr.rend());
+        int digitBegin = stack.size() - 1;
+        for (; digitBegin != 0; --digitBegin) {
+            auto val = stack[digitBegin];
+            if (!('0' <= val && val <= '9')) {
+                ++digitBegin;
+                break;
             }
         }
-        return {
-            stack.begin(),
-            stack.end()
-        };
+        auto repeat = atoi({
+                                stack.begin() + digitBegin,
+                                stack.end(),
+                        });
+        stack.resize(digitBegin);
+        for (int i = 0; i < repeat; ++i) {
+            stack.insert(stack.end(), subStr.rbegin(), subStr.rend());
+        }
     }
+    return {
+        stack.begin(),
+        stack.end()
+    };
+}
 
-    int atoi(const string &str) {
-        if (str.empty()) {
-            return 0;
-        }
-        int value = 0;
-        for (const auto &c : str) {
-            value = value * 10 + c - '0';
-        }
-        return value;
+int atoi(const string &str) {
+    if (str.empty()) {
+        return 0;
     }
-};
+    int value = 0;
+    for (const auto &c : str) {
+        value = value * 10 + c - '0';
+    }
+    return value;
+}
 ```
 
 利用栈进行 DFS 递归搜索模板

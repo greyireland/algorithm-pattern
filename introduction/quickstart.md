@@ -61,11 +61,11 @@ int strStr(string haystack, string needle) {
 
 思路：这是一个典型的应用回溯法的题目，简单来说就是穷尽所有可能性，算法模板如下
 
-```go
-result = []
-func backtrack(选择列表,路径):
+```c++
+result = vector<vector<T>>
+void backtrack(选择列表,路径):
     if 满足结束条件:
-        result.add(路径)
+        result.emplace_back(路径)
         return
     for 选择 in 选择列表:
         做选择
@@ -77,30 +77,25 @@ func backtrack(选择列表,路径):
 
 答案代码
 
-```go
-func subsets(nums []int) [][]int {
-    // 保存最终结果
-    result := make([][]int, 0)
-    // 保存中间结果
-    list := make([]int, 0)
-    backtrack(nums, 0, list, &result)
-    return result
+```c++
+vector<vector<int>> subsets(vector<int> &nums) {
+    vector<vector<int>> result;
+    vector<int> track;
+    backtrack(nums, 0, track, result);
+    return result;
 }
 
-// nums 给定的集合
-// pos 下次添加到集合中的元素位置索引
-// list 临时结果集合(每次需要复制保存)
-// result 最终结果
-func backtrack(nums []int, pos int, list []int, result *[][]int) {
-    // 把临时结果复制出来保存到最终结果
-    ans := make([]int, len(list))
-    copy(ans, list)
-    *result = append(*result, ans)
-    // 选择、处理结果、再撤销选择
-    for i := pos; i < len(nums); i++ {
-        list = append(list, nums[i])
-        backtrack(nums, i+1, list, result)
-        list = list[0 : len(list)-1]
+void backtrack(const vector<int> &nums, int pos, vector<int> &track, vector<vector<int>> &result) {
+    // 插入当前组合
+    result.push_back(track);
+    for (int i = pos; i < nums.size(); ++i) {
+        // 每个值，都有两种可能，包含和不包含
+        // 先压入，包含
+        track.push_back(nums[i]);
+        // 递归处理包含当前值的情况
+        backtrack(nums, i + 1, track, result);
+        // 弹出，向后遍历，处理不包含的情况
+        track.pop_back();
     }
 }
 ```
