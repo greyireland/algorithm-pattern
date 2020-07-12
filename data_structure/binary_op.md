@@ -48,20 +48,19 @@ int singleNumber(vector<int>& nums) {
 
 > 给定一个**非空**整数数组，除了某个元素只出现一次以外，其余每个元素均出现了三次。找出那个只出现了一次的元素。
 
-```go
-func singleNumber(nums []int) int {
-	// 统计每位1的个数
-	var result int
-	for i := 0; i < 64; i++ {
-		sum := 0
-		for j := 0; j < len(nums); j++ {
-			// 统计1的个数
-			sum += (nums[j] >> i) & 1
-		}
-		// 还原位00^10=10 或者用| 也可以
-		result ^= (sum % 3) << i
-	}
-	return result
+```c++
+// 思路：每一位，统计有多少个1，除以3取余数
+// 出现三次的，取余数为0，被过滤掉，剩下的都是只出现一次的那个数
+int singleNumber(vector<int>& nums) {
+    auto ret = 0;
+    for (int i = 0; i < 32; ++i) {
+        auto sumOne = 0;
+        for (const auto &item : nums) {
+            sumOne += (item >> i) & 1;
+        }
+        ret ^= (sumOne % 3) << i;
+    }
+    return ret;
 }
 ```
 
@@ -69,30 +68,37 @@ func singleNumber(nums []int) int {
 
 > 给定一个整数数组  `nums`，其中恰好有两个元素只出现一次，其余所有元素均出现两次。 找出只出现一次的那两个元素。
 
-```go
-func singleNumber(nums []int) []int {
-    // a=a^b
-    // b=a^b
-    // a=a^b
-    // 关键点怎么把a^b分成两部分,方案：可以通过diff最后一个1区分
-
-    diff:=0
-    for i:=0;i<len(nums);i++{
-        diff^=nums[i]
+```c++
+vector<int> singleNumber(vector<int>& nums) {
+    auto diff = 0;
+    // 按位与，出现两次的数会被剔除掉
+    for (const auto &item : nums) {
+        diff ^= item;
     }
-    result:=[]int{diff,diff}
-    // 去掉末尾的1后异或diff就得到最后一个1的位置
-    diff=(diff&(diff-1))^diff
-    for i:=0;i<len(nums);i++{
-        if diff&nums[i]==0{
-            result[0]^=nums[i]
-        }else{
-            result[1]^=nums[i]
+    vector<int> result(2);
+    // 只出现一次的两个数不想等，则其异或的结果必然至少有一位为 1
+    // 找到最后一个 '1'
+    diff &= (-diff);
+    // 再按该位上的值为1还是为0将所有的数分成两组进行异或把两个数分开
+    for (const auto &num : nums) {
+        if ((diff & num) == 0) {
+            result[0] ^= num;
+        } else {
+            result[1] ^= num;
         }
     }
-    return result
+    return result;
 }
 ```
+> 关于 x & (-x)  
+> 在计算机系统中，数值一律用补码来表示和存储  
+> 一个正数 x 与其相反数 -x，只有一位同时为 '1'，并且总为 x 中的最后一位 '1'  
+> 正数的补码与原码相同  
+> 负数的补码，将其原码除符号位外的所有位取反后加1  
+> 10和-10用8位表示为：  
+>  10: 0000 1010  
+> -10: 1111 1010
+> 因此，x & (-x) 可用于求出x中最后一个'1'
 
 [number-of-1-bits](https://leetcode-cn.com/problems/number-of-1-bits/)
 
@@ -135,14 +141,15 @@ int hammingWeight(int n) {
 
 另外一种动态规划解法
 
-```go
-func countBits(num int) []int {
-    res:=make([]int,num+1)
-    for i:=1;i<=num;i++{
-        // 上一个缺1的元素+1即可
-        res[i]=res[i&(i-1)]+1
+```c++
+vector<int> countBits(int num) {
+    vector<int> ret(num + 1);
+    for (int i = 1; i <= num; ++i) {
+        // 对于 i，其二进制1的个数 = 移除其最后一个1剩余的1的个数 + 1
+        // i & (i - 1)移除最后一个1
+        ret[i] = ret[i & (i - 1)] + 1;
     }
-    return res
+    return ret;
 }
 ```
 
@@ -170,23 +177,29 @@ uint32_t reverseBits(uint32_t n) {
 
 > 给定范围 [m, n]，其中 0 <= m <= n <= 2147483647，返回此范围内所有数字的按位与（包含 m, n 两端点）。
 
-```go
-func rangeBitwiseAnd(m int, n int) int {
-    // m 5 1 0 1
-    //   6 1 1 0
-    // n 7 1 1 1
-    // 把可能包含0的全部右移变成
-    // m 5 1 0 0
-    //   6 1 0 0
-    // n 7 1 0 0
-    // 所以最后结果就是m<<count
-    var count int
-    for m!=n{
-        m>>=1
-        n>>=1
-        count++
+```c++
+/*
+ * 思路：
+ * 只要有一位不同时位1，则按位与结果为0
+ * 因此，从m和n最左边一个不同时为1的位起，其右边的位都将被剔除，如：
+ * m =  5    0101
+ * n = 15    1111
+ * 后面2位最终会变为0
+ * 所以，掐头去尾取中间（左边起第二个1）么？
+ * 不，n再大也没用，m跟n最左边的1必须在同一位，否则结果直接为0
+ * 毕竟终归是会有一个中间的数，10000，按位与完，m就没了
+ * 
+ * 所以，m、n同时右移，直到二者相等（剩下最左边的若干个1，或者为0）
+ * 再进行左移
+ */
+int rangeBitwiseAnd(int m, int n) {
+    auto zeroNum = 0;
+    while (m != n) {
+        m >>= 1;
+        n >>= 1;
+        ++zeroNum;
     }
-    return m<<count
+    return m << zeroNum;
 }
 ```
 

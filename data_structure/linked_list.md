@@ -20,19 +20,16 @@
 > 给定一个排序链表，删除所有重复的元素，使得每个元素只出现一次。
 
 ```c++
-class Solution {
-public:
-     ListNode* deleteDuplicates(ListNode* head) {
-        auto current = head;
-        while (current) {
-            while (current->next && current->next->val == current->val) {
-                current->next = current->next->next;
-            }
-            current = current->next;
-        }
-        return head;
-    }
-};
+ListNode* deleteDuplicates(ListNode* head) {
+   auto current = head;
+   while (current) {
+       while (current->next && current->next->val == current->val) {
+           current->next = current->next->next;
+       }
+       current = current->next;
+   }
+   return head;
+}
 ```
 
 ### [remove-duplicates-from-sorted-list-ii](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii/)
@@ -42,33 +39,30 @@ public:
 思路：链表头结点可能被删除，所以用 dummy node 辅助删除
 
 ```c++
-class Solution {
-public:
-    ListNode* deleteDuplicates(ListNode* head) {
-        
-        if (!head) {
-            return head;
-        }
+ListNode* deleteDuplicates(ListNode* head) {
+    
+    if (!head) {
+        return head;
+    }
 
-        auto dummy = ListNode(0);
-        dummy.next = head;
-        head = &dummy;
+    auto dummy = ListNode(0);
+    dummy.next = head;
+    head = &dummy;
 
-        int repeatVal;
-        while (head->next && head->next->next) {
-            if (head->next->val != head->next->next->val) {
-                head = head->next;
-            } else {
-                repeatVal = head->next->val;
-                while (head->next && head->next->val == repeatVal) {
-                    head->next = head->next->next;
-                }
+    int repeatVal;
+    while (head->next && head->next->next) {
+        if (head->next->val != head->next->next->val) {
+            head = head->next;
+        } else {
+            repeatVal = head->next->val;
+            while (head->next && head->next->val == repeatVal) {
+                head->next = head->next->next;
             }
         }
-
-        return dummy.next;
     }
-};
+
+    return dummy.next;
+}
 ```
 
 注意点
@@ -83,20 +77,17 @@ public:
 思路：用一个 prev 节点保存向前指针，temp 保存向后的临时指针
 
 ```c++
-class Solution {
-public:
-    ListNode* reverseList(ListNode* head) {
-        ListNode *prev = nullptr;
-        ListNode *next = nullptr;
-        while (head) {
-            next = head->next;
-            head->next = prev;
-            prev = head;
-            head = next;
-        }
-        return prev;
+ListNode* reverseList(ListNode* head) {
+    ListNode *prev = nullptr;
+    ListNode *next = nullptr;
+    while (head) {
+        next = head->next;
+        head->next = prev;
+        prev = head;
+        head = next;
     }
-};
+    return prev;
+}
 ```
 
 ### [reverse-linked-list-ii](https://leetcode-cn.com/problems/reverse-linked-list-ii/)
@@ -106,37 +97,34 @@ public:
 思路：先遍历到 m 处，翻转，再拼接后续，注意指针处理
 
 ```c++
-class Solution {
-public:
-    ListNode* reverseBetween(ListNode* head, int m, int n) {
-        if (!head) {
-            return nullptr;
-        }
-        auto dummy = ListNode(0);
-        dummy.next = head;
-        head = &dummy;
-
-        ListNode *prev = nullptr;
-        auto index = 0;
-        for (; index < m; ++index) {
-            prev = head;
-            head = head->next;
-        }
-
-        auto rend = head;
-        ListNode *newNext = nullptr;
-        for (; index <= n; ++index) {
-            auto nextNode = head->next;
-            head->next = newNext;
-            newNext = head;
-            head = nextNode;
-        }
-        prev->next = newNext;
-        rend->next = head;
-
-        return dummy.next;
+ListNode* reverseBetween(ListNode* head, int m, int n) {
+    if (!head) {
+        return nullptr;
     }
-};
+    auto dummy = ListNode(0);
+    dummy.next = head;
+    head = &dummy;
+
+    ListNode *prev = nullptr;
+    auto index = 0;
+    for (; index < m; ++index) {
+        prev = head;
+        head = head->next;
+    }
+
+    auto rend = head;
+    ListNode *newNext = nullptr;
+    for (; index <= n; ++index) {
+        auto nextNode = head->next;
+        head->next = newNext;
+        newNext = head;
+        head = nextNode;
+    }
+    prev->next = newNext;
+    rend->next = head;
+
+    return dummy.next;
+}
 ```
 
 ### [merge-two-sorted-lists](https://leetcode-cn.com/problems/merge-two-sorted-lists/)
@@ -191,32 +179,29 @@ ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
 思路：将大于 x 的节点，放到另外一个链表，最后连接这两个链表
 
 ```c++
-class Solution {
-public:
-    // 思路：将大于x的节点，放到另外一个链表，最后连接这两个链表
-    ListNode* partition(ListNode* head, int x) {
-        if (!head) {
-            return nullptr;
-        }
-        ListNode dummy{0};
-        dummy.next = head;
-        head = &dummy;
-        ListNode greaterList{0};
-        auto tail = &greaterList;
-        while (head->next) {
-            if (head->next->val < x) {
-                head = head->next;
-                continue;
-            }
-            tail->next = head->next;
-            tail = tail->next;
-            head->next = head->next->next;
-        }
-        tail->next = nullptr;
-        head->next = greaterList.next;
-        return dummy.next;
+// 思路：将大于x的节点，放到另外一个链表，最后连接这两个链表
+ListNode* partition(ListNode* head, int x) {
+    if (!head) {
+        return nullptr;
     }
-};
+    ListNode dummy{0};
+    dummy.next = head;
+    head = &dummy;
+    ListNode greaterList{0};
+    auto tail = &greaterList;
+    while (head->next) {
+        if (head->next->val < x) {
+            head = head->next;
+            continue;
+        }
+        tail->next = head->next;
+        tail = tail->next;
+        head->next = head->next->next;
+    }
+    tail->next = nullptr;
+    head->next = greaterList.next;
+    return dummy.next;
+}
 ```
 
 哑巴节点使用场景
@@ -230,56 +215,53 @@ public:
 思路：归并排序，找中点和合并操作
 
 ```c++
-class Solution {
-public:
-    ListNode* sortList(ListNode* head) {
-        return mergeSort(head);
-    }
+ListNode* sortList(ListNode* head) {
+    return mergeSort(head);
+}
 
-    ListNode* mergeSort(ListNode *head) {
-        if (!head || !head->next) {
-            return head;
-        }
-        auto middle = findMiddle(head);
-        auto left = head;
-        auto right = middle->next;
-        middle->next = nullptr;
-        left = mergeSort(left);
-        right = mergeSort(right);
-        return mergeTwoLists(left, right);
+ListNode* mergeSort(ListNode *head) {
+    if (!head || !head->next) {
+        return head;
     }
+    auto middle = findMiddle(head);
+    auto left = head;
+    auto right = middle->next;
+    middle->next = nullptr;
+    left = mergeSort(left);
+    right = mergeSort(right);
+    return mergeTwoLists(left, right);
+}
 
-    ListNode* findMiddle(ListNode *node) {
-        auto slow = node;
-        auto fast = node->next;
-        while (fast && fast->next) {
-            slow = slow->next;
-            fast = fast->next->next;
-        }
-        return slow;
+ListNode* findMiddle(ListNode *node) {
+    auto slow = node;
+    auto fast = node->next;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
     }
+    return slow;
+}
 
-    ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
-        if (!l1 || !l2) {
-            return l1 ? l1 : l2;
-        }
-        auto dummy = ListNode(0);
-        ListNode *iter = &dummy;
-        while (l1 && l2) {
-            if (l1->val < l2->val) {
-                iter->next = l1;
-                l1 = l1->next;
-            } else {
-                iter->next = l2;
-                l2 = l2->next;
-            }
-            iter = iter->next;
-        }
-        // 这里直接接上即可，不用一个个拼接
-        iter->next = l1 ? l1 : l2;
-        return dummy.next;
+ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
+    if (!l1 || !l2) {
+        return l1 ? l1 : l2;
     }
-};
+    auto dummy = ListNode(0);
+    ListNode *iter = &dummy;
+    while (l1 && l2) {
+        if (l1->val < l2->val) {
+            iter->next = l1;
+            l1 = l1->next;
+        } else {
+            iter->next = l2;
+            l2 = l2->next;
+        }
+        iter = iter->next;
+    }
+    // 这里直接接上即可，不用一个个拼接
+    iter->next = l1 ? l1 : l2;
+    return dummy.next;
+}
 ```
 
 注意点
@@ -296,57 +278,54 @@ public:
 思路：找到中点断开，翻转后面部分，然后合并前后两个链表
 
 ```c++
-class Solution {
-public:
-    /*
-     * 给定一个单链表 L：L0→L1→…→Ln-1→Ln ，
-     * 将其重新排列后变为： L0→Ln→L1→Ln-1→L2→Ln-2→…
-     */
-    void reorderList(ListNode* head) {
-        if (!head) {
-            return;
-        }
-        auto middle = findMiddle(head);
-        auto left = head;
-        auto right = middle->next;
-        middle->next = nullptr;
-        right = revertList(right);
-        while (left && right) {
-            auto nextLeft = left->next;
-            auto nextRight = right->next;
-            left->next = right;
-            right->next = nextLeft;
-            left = nextLeft;
-            right = nextRight;
-        }
+/*
+ * 给定一个单链表 L：L0→L1→…→Ln-1→Ln ，
+ * 将其重新排列后变为： L0→Ln→L1→Ln-1→L2→Ln-2→…
+ */
+void reorderList(ListNode* head) {
+    if (!head) {
+        return;
     }
+    auto middle = findMiddle(head);
+    auto left = head;
+    auto right = middle->next;
+    middle->next = nullptr;
+    right = revertList(right);
+    while (left && right) {
+        auto nextLeft = left->next;
+        auto nextRight = right->next;
+        left->next = right;
+        right->next = nextLeft;
+        left = nextLeft;
+        right = nextRight;
+    }
+}
 
-    ListNode* revertList(ListNode *head) {
-        if (!head) {
-            return head;
-        }
-        auto prev = head;
-        head = head->next;
-        prev->next = nullptr;
-        while (head) {
-            auto next = head->next;
-            head->next = prev;
-            prev = head;
-            head = next;
-        }
-        return prev;
+ListNode* revertList(ListNode *head) {
+    if (!head) {
+        return head;
     }
+    auto prev = head;
+    head = head->next;
+    prev->next = nullptr;
+    while (head) {
+        auto next = head->next;
+        head->next = prev;
+        prev = head;
+        head = next;
+    }
+    return prev;
+}
 
-    ListNode* findMiddle(ListNode *node) {
-        auto slow = node;
-        auto fast = node->next;
-        while (fast && fast->next) {
-            slow = slow->next;
-            fast = fast->next->next;
-        }
-        return slow;
+ListNode* findMiddle(ListNode *node) {
+    auto slow = node;
+    auto fast = node->next;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
     }
-};
+    return slow;
+}
 ```
 
 ### [linked-list-cycle](https://leetcode-cn.com/problems/linked-list-cycle/)
@@ -357,24 +336,21 @@ public:
 ![fast_slow_linked_list](https://img.fuiboom.com/img/fast_slow_linked_list.png)
 
 ```c++
-class Solution {
-public:
-    bool hasCycle(ListNode *head) {
-        if (!head) {
-            return false;
-        }
-        auto slow = head;
-        auto fast = head->next;
-        while (fast && fast->next) {
-            if (fast == slow) {
-                return true;
-            }
-            slow = slow->next;
-            fast = fast->next->next;
-        }
+bool hasCycle(ListNode *head) {
+    if (!head) {
         return false;
     }
-};
+    auto slow = head;
+    auto fast = head->next;
+    while (fast && fast->next) {
+        if (fast == slow) {
+            return true;
+        }
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return false;
+}
 ```
 
 ### [linked-list-cycle-ii](https://leetcode-cn.com/problems/linked-list-cycle-ii/)
