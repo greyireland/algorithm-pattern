@@ -640,9 +640,7 @@ func zigzagLevelOrder(root *TreeNode) [][]int {
 }
 func reverse(nums []int) {
 	for i := 0; i < len(nums)/2; i++ {
-		t := nums[i]
-		nums[i] = nums[len(nums)-1-i]
-		nums[len(nums)-1-i] = t
+		nums[i], nums[len(nums)-1-i] = nums[len(nums)-1-i], nums[i]
 	}
 }
 ```
