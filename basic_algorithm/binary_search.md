@@ -27,7 +27,7 @@ func search(nums []int, target int) int {
     end := len(nums) - 1
     // 2、处理for循环
     for start+1 < end {
-        mid := start + (end-start)/2
+        mid := start + ((end-start)>>1)
         // 3、比较a[mid]和target值
         if nums[mid] == target {
             end = mid
@@ -64,7 +64,7 @@ func search(nums []int, target int) int {
     start := 0
     end := len(nums) - 1
     for start <= end {
-        mid := start + (end-start)/2
+        mid := start + ((end-start)>>1)
         if nums[mid] == target {
             return mid
         } else if nums[mid] < target {
@@ -98,7 +98,7 @@ func searchRange (A []int, target int) []int {
     start := 0
     end := len(A) - 1
     for start+1 < end {
-        mid := start + (end-start)/2
+        mid := start + ((end-start)>>1)
         if A[mid] > target {
             end = mid
         } else if A[mid] < target {
@@ -121,7 +121,7 @@ func searchRange (A []int, target int) []int {
     start = 0
     end = len(A) - 1
     for start+1 < end {
-        mid := start + (end-start)/2
+        mid := start + ((end-start)>>1)
         if A[mid] > target {
             end = mid
         } else if A[mid] < target {
@@ -155,7 +155,7 @@ func searchInsert(nums []int, target int) int {
     start := 0
     end := len(nums) - 1
     for start+1 < end {
-        mid := start + (end-start)/2
+        mid := start + ((end-start)>>1)
         if nums[mid] == target {
             // 标记开始位置
             start = mid
@@ -194,7 +194,7 @@ func searchMatrix(matrix [][]int, target int) bool {
     start := 0
     end := row*col - 1
     for start+1 < end {
-        mid := start + (end-start)/2
+        mid := start + ((end-start)>>1)
         // 获取2纬数组对应值
         val := matrix[mid/col][mid%col]
         if val > target {
@@ -252,7 +252,7 @@ func findMin(nums []int) int {
     end := len(nums) - 1
 
     for start+1 < end {
-        mid := start + (end-start)/2
+        mid := start + ((end-start)>>1)
         // 最后一个元素值为target
         if nums[mid] <= nums[end] {
             end = mid
@@ -289,7 +289,7 @@ func findMin(nums []int) int {
         for start < end && nums[start] == nums[start+1] {
             start++
         }
-        mid := start + (end-start)/2
+        mid := start + ((end-start)>>1)
         // 中间元素和最后一个元素比较（判断中间点落在左边上升区，还是右边上升区）
         if nums[mid] <= nums[end] {
             end = mid
@@ -320,7 +320,7 @@ func search(nums []int, target int) int {
     start := 0
     end := len(nums) - 1
     for start+1 < end {
-        mid := start + (end-start)/2
+        mid := start + ((end-start)>>1)
         // 相等直接返回
         if nums[mid] == target {
             return mid
@@ -375,7 +375,7 @@ func search(nums []int, target int) bool {
         for start < end && nums[end] == nums[end-1] {
             end--
         }
-        mid := start + (end-start)/2
+        mid := start + ((end-start)>>1)
         // 相等直接返回
         if nums[mid] == target {
             return true
