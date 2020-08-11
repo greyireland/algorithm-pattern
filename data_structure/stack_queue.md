@@ -83,8 +83,9 @@ func (this *MinStack) GetMin() int {
 
 [evaluate-reverse-polish-notation](https://leetcode-cn.com/problems/evaluate-reverse-polish-notation/)
 
-> **波兰表达式计算** > **输入:** ["2", "1", "+", "3", "*"] > **输出:** 9
-> **解释:** ((2 + 1) \* 3) = 9
+> **波兰表达式计算** > **输入:** `["2", "1", "+", "3", "*"]` > **输出:** 9
+>
+> **解释:** `((2 + 1) * 3) = 9`
 
 思路：通过栈保存原来的元素，遇到表达式弹出运算，再推入结果，重复这个过程
 
