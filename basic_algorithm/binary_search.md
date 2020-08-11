@@ -223,7 +223,7 @@ func firstBadVersion(n int) int {
     start := 0
     end := n
     for start+1 < end {
-        mid := start + (end - start)/2
+        mid := start + ((end-start)>>1)
         if isBadVersion(mid) {
             end = mid
         } else if isBadVersion(mid) == false {
