@@ -121,7 +121,7 @@ func sink(a []int, i int, length int) {
 	for {
 		// 左节点索引(从0开始，所以左节点为i*2+1)
 		l := i*2 + 1
-		// 有节点索引
+		// 右节点索引
 		r := i*2 + 2
 		// idx保存根、左、右三者之间较大值的索引
 		idx := i
@@ -129,7 +129,7 @@ func sink(a []int, i int, length int) {
 		if l < length && a[l] > a[idx] {
 			idx = l
 		}
-		// 存在有节点，且值较大，取右节点
+		// 存在右节点，且值较大，取右节点
 		if r < length && a[r] > a[idx] {
 			idx = r
 		}
