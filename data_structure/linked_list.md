@@ -161,16 +161,12 @@ func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
         head = head.Next
     }
     // 连接l1 未处理完节点
-    for l1 != nil {
+    if l1 != nil {
         head.Next = l1
-        head = head.Next
-        l1 = l1.Next
     }
     // 连接l2 未处理完节点
-    for l2 != nil {
+    if l2 != nil {
         head.Next = l2
-        head = head.Next
-        l2 = l2.Next
     }
     return dummy.Next
 }
@@ -253,16 +249,12 @@ func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
         head = head.Next
     }
     // 连接l1 未处理完节点
-    for l1 != nil {
+    if l1 != nil {
         head.Next = l1
-        head = head.Next
-        l1 = l1.Next
     }
     // 连接l2 未处理完节点
-    for l2 != nil {
+    if l2 != nil {
         head.Next = l2
-        head = head.Next
-        l2 = l2.Next
     }
     return dummy.Next
 }
@@ -333,16 +325,12 @@ func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
         head = head.Next
     }
     // 连接l1 未处理完节点
-    for l1 != nil {
+    if l1 != nil {
         head.Next = l1
-        head = head.Next
-        l1 = l1.Next
     }
     // 连接l2 未处理完节点
-    for l2 != nil {
+    if l2 != nil {
         head.Next = l2
-        head = head.Next
-        l2 = l2.Next
     }
     return dummy.Next
 }
@@ -409,8 +397,8 @@ func detectCycle(head *ListNode) *ListNode {
     for fast != nil && fast.Next != nil {
         if fast == slow {
             // 慢指针重新从头开始移动，快指针从第一次相交点下一个节点开始移动
-            fast = head
-            slow = slow.Next // 注意
+            slow = head
+            fast = fast.Next // 注意
             // 比较指针对象（不要比对指针Val值）
             for fast != slow {
                 fast = fast.Next
