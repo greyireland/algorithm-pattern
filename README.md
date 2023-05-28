@@ -104,4 +104,4 @@
 | ✅   | [lvseouren](https://github.com/lvseouren) | [algorithm-study-record(c++ 实现)](https://github.com/lvseouren/algorithm-study-record) |
 | ✅   | [chienmy](https://github.com/chienmy) | [algorithm-pattern-java(Java 实现)](https://github.com/chienmy/algorithm-pattern-java), [在线文档 Gitbook](https://chienmy.gitbook.io/algorithm-pattern-java/) |
 | ✅ | [ligecarryme](https://github.com/ligecarryme) | [algorithm-pattern-JavaScript(JS+TS实现)](https://github.com/ligecarryme/algorithm-pattern-JavaScript) |
-
+| ✅ | [Esdeath](https://github.com/Esdeath) | [algorithm-pattern-dart(dart实现)](https://github.com/Esdeath/algorithm-pattern-dart),[在线文档 Gitbook](https://ayaseeri.gitbook.io/algorithm-pattern-dart/) |
