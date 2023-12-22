@@ -106,3 +106,4 @@
 | ✅ | [ligecarryme](https://github.com/ligecarryme) | [algorithm-pattern-JavaScript(JS+TS实现)](https://github.com/ligecarryme/algorithm-pattern-JavaScript) |
 | ✅ | [Esdeath](https://github.com/Esdeath) | [algorithm-pattern-dart(dart实现)](https://github.com/Esdeath/algorithm-pattern-dart),[在线文档 Gitbook](https://ayaseeri.gitbook.io/algorithm-pattern-dart/) |
 | ✅ | [longpi1](https://github.com/longpi1) | [algorithm-pattern-golang(golang实现)](https://github.com/longpi1/algorithm-pattern)
+| ✅ | [tpxxn](https://github.com/tpxxn) | [algorithm-pattern-CSharp(C# 实现)](https://github.com/tpxxn/algorithm-pattern-CSharp)
