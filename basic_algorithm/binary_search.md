@@ -220,7 +220,7 @@ func searchMatrix(matrix [][]int, target int) bool {
 ```go
 func firstBadVersion(n int) int {
     // 思路：二分搜索
-    start := 0
+    start := 1
     end := n
     for start+1 < end {
         mid := start + (end - start)/2

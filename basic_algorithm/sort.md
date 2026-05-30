@@ -16,7 +16,8 @@ func quickSort(nums []int, start, end int) {
     if start < end {
         // 分治法：divide
         pivot := partition(nums, start, end)
-        quickSort(nums, 0, pivot-1)
+
+quickSort(nums, start, pivot-1)
         quickSort(nums, pivot+1, end)
     }
 }
