@@ -91,11 +91,11 @@ func merge(left, right []int) (result []int) {
 
 > 完美二叉树 VS 其他二叉树
 
-![image.png](https://img.fuiboom.com/img/tree_type.png)
+![image.png](https://cdn.jsdelivr.net/gh/greyireland/algorithm-pattern@master/images/tree_type.png)
 
 [动画展示](https://www.bilibili.com/video/av18980178/)
 
-![image.png](https://img.fuiboom.com/img/heap.png)
+![image.png](https://cdn.jsdelivr.net/gh/greyireland/algorithm-pattern@master/images/heap.png)
 
 核心代码
 

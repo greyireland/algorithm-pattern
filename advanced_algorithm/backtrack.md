@@ -28,7 +28,7 @@ func backtrack(选择列表,路径):
 
 遍历过程
 
-![image.png](https://img.fuiboom.com/img/backtrack.png)
+![image.png](https://cdn.jsdelivr.net/gh/greyireland/algorithm-pattern@master/images/backtrack.png)
 
 ```go
 func subsets(nums []int) [][]int {
