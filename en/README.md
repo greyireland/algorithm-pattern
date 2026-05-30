@@ -1,6 +1,6 @@
 # Algorithm Patterns
 
-**English** | [中文](./README_zh.md)
+**English** | [中文](../README_zh.md)
 
 ![Let's grind LeetCode](https://cdn.jsdelivr.net/gh/greyireland/algorithm-pattern@master/images/title.png)
 
@@ -20,28 +20,28 @@ Online docs on Gitbook: [Algorithm Patterns 🔥](https://greyireland.gitbook.io
 
 ### Getting Started 🐶
 
-- [Intro to Go](./en/introduction/golang.md)
-- [Algorithm Quickstart](./en/introduction/quickstart.md)
+- [Intro to Go](./introduction/golang.md)
+- [Algorithm Quickstart](./introduction/quickstart.md)
 
 ### Data Structures 🐰
 
-- [Binary Tree](./en/data_structure/binary_tree.md)
-- [Linked List](./en/data_structure/linked_list.md)
-- [Stack and Queue](./en/data_structure/stack_queue.md)
-- [Binary / Bit Manipulation](./en/data_structure/binary_op.md)
+- [Binary Tree](./data_structure/binary_tree.md)
+- [Linked List](./data_structure/linked_list.md)
+- [Stack and Queue](./data_structure/stack_queue.md)
+- [Binary / Bit Manipulation](./data_structure/binary_op.md)
 
 ### Basic Algorithms 🐮
 
-- [Binary Search](./en/basic_algorithm/binary_search.md)
-- [Sorting Algorithms](./en/basic_algorithm/sort.md)
-- [Dynamic Programming](./en/basic_algorithm/dp.md)
+- [Binary Search](./basic_algorithm/binary_search.md)
+- [Sorting Algorithms](./basic_algorithm/sort.md)
+- [Dynamic Programming](./basic_algorithm/dp.md)
 
 ### Algorithmic Thinking 🦁
 
-- [Recursion](./en/advanced_algorithm/recursion.md)
-- [Sliding Window](./en/advanced_algorithm/slide_window.md)
-- [Binary Search Tree](./en/advanced_algorithm/binary_search_tree.md)
-- [Backtracking](./en/advanced_algorithm/backtrack.md)
+- [Recursion](./advanced_algorithm/recursion.md)
+- [Sliding Window](./advanced_algorithm/slide_window.md)
+- [Binary Search Tree](./advanced_algorithm/binary_search_tree.md)
+- [Backtracking](./advanced_algorithm/backtrack.md)
 
 ## Reflections
 
@@ -92,20 +92,3 @@ Here are some classic computer science books, most of which should help with int
 Continuously updated. If you find it helpful, please drop a **star** ⭐️~
 
 【 Github 】[https://github.com/greyireland/algorithm-pattern](https://github.com/greyireland/algorithm-pattern) ⭐️
-
-## Check-ins
-
-After completing the plan, you can submit a Pull Request and add your own repo below to check in with your own algorithm-pattern implementation~
-
-| Done | User                                              | Project                                                             |
-| ---- | ------------------------------------------------- | ------------------------------------------------------------------- |
-| ✅   | [easyui](https://github.com/easyui/) | [algorithm-pattern-swift (Swift)](https://github.com/easyui/algorithm-pattern-swift), [Gitbook docs](https://zyj.gitbook.io/algorithm-pattern-swift/) |
-| ✅   | [wardseptember](https://github.com/wardseptember) | [notes (Java)](https://github.com/wardseptember/notes)          |
-| ✅   | [dashidhy](https://github.com/dashidhy) | [algorithm-pattern-python (Python)](https://github.com/dashidhy/algorithm-pattern-python) |
-| ✅   | [binzi56](https://github.com/binzi56) | [algorithm-pattern-c (C++)](https://github.com/binzi56/algorithm-pattern-c) |
-| ✅   | [lvseouren](https://github.com/lvseouren) | [algorithm-study-record (C++)](https://github.com/lvseouren/algorithm-study-record) |
-| ✅   | [chienmy](https://github.com/chienmy) | [algorithm-pattern-java (Java)](https://github.com/chienmy/algorithm-pattern-java), [Gitbook docs](https://chienmy.gitbook.io/algorithm-pattern-java/) |
-| ✅ | [ligecarryme](https://github.com/ligecarryme) | [algorithm-pattern-JavaScript (JS+TS)](https://github.com/ligecarryme/algorithm-pattern-JavaScript) |
-| ✅ | [Esdeath](https://github.com/Esdeath) | [algorithm-pattern-dart (Dart)](https://github.com/Esdeath/algorithm-pattern-dart), [Gitbook docs](https://ayaseeri.gitbook.io/algorithm-pattern-dart/) |
-| ✅ | [longpi1](https://github.com/longpi1) | [algorithm-pattern-golang (Go)](https://github.com/longpi1/algorithm-pattern)
-| ✅ | [tpxxn](https://github.com/tpxxn) | [algorithm-pattern-CSharp (C#)](https://github.com/tpxxn/algorithm-pattern-CSharp)

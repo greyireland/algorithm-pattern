@@ -1,0 +1,5 @@
+root: ./
+
+structure:
+  readme: README_zh.md
+  summary: SUMMARY.md
